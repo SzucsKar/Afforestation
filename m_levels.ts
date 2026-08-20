@@ -51,20 +51,21 @@ namespace m_levels {
         scene.cameraFollowSprite(Hero)
         controller.moveSprite(Hero, 100, 0)
         sprites.destroyAllSpritesOfKind(SpriteKind.Enemy)
+        sprites.destroyAllSpritesOfKind(SpriteKind.Woodcutter)
         for (let value of tiles.getTilesByType(assets.tile`BackGrStoneBugStart`)) {
             Bug = sprites.create(assets.image`Bug`, SpriteKind.Enemy)
             tiles.placeOnTile(Bug, value)
             Bug.vx = 15
             Bug.ay = 300
         }
-        for (let value2 of tiles.getTilesByType(assets.tile`BackGrkyFlierStart`)) {
+        for (let value of tiles.getTilesByType(assets.tile`BackGrkyFlierStart`)) {
             Bug = sprites.create(assets.image`Flier`, SpriteKind.Enemy)
-            tiles.placeOnTile(Bug, value2)
+            tiles.placeOnTile(Bug, value)
             Bug.vx = 15
         }
-        for (let value3 of tiles.getTilesByType(assets.tile`BackGrWoodcutterStart`)) {
+        for (let value of tiles.getTilesByType(assets.tile`BackGrWoodcutterStart`)) {
             Bug = sprites.create(assets.image`Woodcutter`, SpriteKind.Woodcutter)
-            tiles.placeOnTile(Bug, value3)
+            tiles.placeOnTile(Bug, value)
             Bug.vx = 15
             Bug.ay = 300
         }

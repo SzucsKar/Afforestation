@@ -15,7 +15,8 @@
         "m_events.ts",
         "m_levels.ts",
         "m_hero.ts",
-        "m_enemies.ts"
+        "m_enemies.ts",
+        "main.py"
     ],
     "testFiles": [
         "test.ts"

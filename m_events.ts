@@ -14,4 +14,7 @@ namespace events {
         sprites.destroy(otherSprite, effects.disintegrate, 150)
         music.play(music.melodyPlayable(music.baDing), music.PlaybackMode.InBackground)
     })
+    scene.onOverlapTile(SpriteKind.Woodcutter, assets.tile`TreeUPW`, function (sprite, location) {
+        tiles.setTileAt(location, assets.tile`TreeUPW0`)
+    })
 }
