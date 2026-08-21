@@ -11,12 +11,7 @@
         "tilemap.g.jres",
         "tilemap.g.ts",
         "images.g.jres",
-        "images.g.ts",
-        "m_events.ts",
-        "m_levels.ts",
-        "m_hero.ts",
-        "m_enemies.ts",
-        "main.py"
+        "images.g.ts"
     ],
     "testFiles": [
         "test.ts"
