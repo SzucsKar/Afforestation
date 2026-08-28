@@ -215,7 +215,6 @@ namespace m_hero {
 
 namespace m_enemies {
     scene.onHitWall(SpriteKind.Woodcutter, function (sprite, location) {
-        console.log("Woodcutter hit on wall")
         if (sprite.isHittingTile(CollisionDirection.Left)) {
             sprite.vx = 15
         }
@@ -238,13 +237,23 @@ namespace events {
         sprites.destroy(otherSprite, effects.disintegrate, 150);
     })
     sprites.onOverlap(SpriteKind.Enemy, SpriteKind.Projectile, function (sprite, otherSprite) {
-        sprites.destroy(sprite)
-        sprites.destroy(otherSprite, effects.disintegrate, 150)
+        sprites.destroy(sprite);
+        sprites.destroy(otherSprite, effects.disintegrate, 150);
         music.play(music.melodyPlayable(music.baDing), music.PlaybackMode.InBackground)
     })
     scene.onOverlapTile(SpriteKind.Woodcutter, assets.tile`TreeUPW`, function (sprite, location) {
+        let directionX = sprite.vx;
+        sprite.vx = 0;
+        let tree = sprites.create(assets.image`TreeAnim`, SpriteKind.Food);
+        tiles.placeOnTile(tree, location);
+        animation.runImageAnimation(tree, assets.animation`TreeAnim`,200,false);
+        control.runInParallel(function() {
+            pause(1000);
+            sprite.vx = directionX;
+            tree.destroy();
+        })
         
-        tiles.setTileAt(location, assets.tile`TreeUPW0`)
+        tiles.setTileAt(location, assets.tile`TreeUPW0`);
     })
 }
 
