@@ -32,11 +32,7 @@ let projectile = null
 let Hero = sprites.create(assets.image`Mario`, SpriteKind.Player)
 Hero.setFlag(SpriteFlag.Invisible, true)
 
-// Intro rész itt következik majd
-scene.setBackgroundColor(9)
-info.setScore(0)
-m_levels.NextLevel(1)
-
+// Mindig figyelt és futtatot elemek
 forever(function () {
     if (Hero.vx > 0) {
         lastVelocity = direction.Right;
@@ -45,18 +41,39 @@ forever(function () {
     }
 })
 
+// Intro rész itt következik majd
+info.setScore(0)
+info.setLife(10)
+m_levels.NextLevel(1)
+
+
+
 namespace m_levels {
-    // SZINTEK KÖZÖTTI VÁLTÁS
+    // SZINTEK BEVEZETÉSE ÉS INDULÁSI PARAMÉTEREI
     export function NextLevel(num: number) {
         if (num == 1) {
-            game.showLongText("Teszt kör", DialogLayout.Bottom)
+            info.showScore(false)
+            info.showLife(false)
+            scene.setBackgroundColor(13)
+            game.showLongText("Sötétedik...", DialogLayout.Bottom)
+            game.showLongText("Furcsa rovarok jelentek meg az erdőben.", DialogLayout.Bottom)
+            game.showLongText("Hallod, ahogy recsegnek az ágak, zizegnek a levelek.", DialogLayout.Bottom)
+            scene.setBackgroundColor(12)
+            game.showLongText("Úgy döntesz, kimész a fák közé és megnézed mi történik.", DialogLayout.Bottom)
+            game.showLongText("A rovarok a fákat pusztítják. Mindent megesznek, ami az útjukba kerül", DialogLayout.Bottom)
+            scene.setBackgroundColor(15)
+            game.showLongText("Fuss! Siess a házba szerszámokért, hogy metsd, amit még lehet!", DialogLayout.Bottom)
+            game.showLongText("Igyekezz!!! Megy az idő!", DialogLayout.Bottom)
+            info.startCountdown(60)
             tiles.setCurrentTilemap(tilemap`level9`)
             goalCountOfTreasure += 0
-            xHero = 72
-            yHero = 168
+            xHero = 24
+            yHero = 424
             InitialLevel(xHero, yHero)
         } else if (num == 2) {
-            game.showLongText("Gyűjtd össze a facsemetéket!", DialogLayout.Bottom)
+            scene.setBackgroundColor(8)
+            game.showLongText("Bent vagy a házban. Nagy a kupleráj.", DialogLayout.Bottom)
+            game.showLongText("Tologasd el a tárgyakat, hogy elérj a baltáig!", DialogLayout.Bottom)
             tiles.setCurrentTilemap(tilemap`level8`)
             goalCountOfTreasure += 12
             xHero = 24
