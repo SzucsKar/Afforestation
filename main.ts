@@ -55,17 +55,21 @@ namespace m_levels {
             info.showScore(false)
             info.showLife(false)
             scene.setBackgroundColor(13)
-            game.showLongText("Sötétedik...", DialogLayout.Bottom)
-            game.showLongText("Furcsa rovarok jelentek meg az erdőben.", DialogLayout.Bottom)
-            game.showLongText("Hallod, ahogy recsegnek az ágak, zizegnek a levelek.", DialogLayout.Bottom)
+            game.showLongText(
+                "Sötétedik...\n" +
+                "Furcsa rovarok jelentek meg az erdőben.\n" +
+                "Hallod, ahogy recsegnek az ágak, zizegnek a levelek.", DialogLayout.Bottom)
             scene.setBackgroundColor(12)
-            game.showLongText("Úgy döntesz, kimész a fák közé és megnézed mi történik.", DialogLayout.Bottom)
-            game.showLongText("A rovarok a fákat pusztítják. Mindent megesznek, ami az útjukba kerül", DialogLayout.Bottom)
+            game.showLongText(
+                "Úgy döntesz, kimész a fák közé és megnézed mi történik.\n" +
+                "A rovarok a fákat pusztítják. Mindent megesznek, ami az útjukba kerül", DialogLayout.Bottom)
             scene.setBackgroundColor(15)
-            game.showLongText("Fuss! Siess a házba szerszámokért, hogy metsd, amit még lehet!", DialogLayout.Bottom)
-            game.showLongText("Igyekezz!!! Megy az idő!", DialogLayout.Bottom)
+            game.showLongText(
+                "Fuss! Siess a házba a szerszámokért, hogy metsd, amit még lehet!\n" +
+                "Igyekezz!!! Megy az idő!", DialogLayout.Bottom)
             info.startCountdown(60)
             tiles.setCurrentTilemap(tilemap`level9`)
+            music.play(music.createSong(assets.song`Level1_BGsong`), music.PlaybackMode.LoopingInBackground)
             goalCountOfTreasure += 0
             xHero = 24
             yHero = 424
