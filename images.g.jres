@@ -54,10 +54,50 @@
         "mimeType": "image/x-mkcd-f4",
         "displayName": "Woodcutter"
     },
+    "image13": {
+        "data": "hwQQABAAAADMzMzMzMzMzAwAAADw/wDADAAAAP/wD8AMAAAADwAPwAwAAA7/8A/ADADu7vD/AMAMAADg7gAAwAwA0O7gAADADFAA4O4AAMAMAO7u8P8AwAwAAA7/8A/ADAAAAA8AD8AMAAAA//APwAwAAADw/wDADAAAAAAAAMDMzMzMzMzMzA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "s_bicycle"
+    },
+    "image14": {
+        "data": "hwQQABAAAADMzMzMzMzMzAwAAAAAAADADADuAAAAAMAMAOQAAAAAwAwA5O7u7gDADADkAAAAAMAMAOQAAAAAwAwA7gAAAADADADuAAAAAMAMAO4AAAAAwAwA7gAAAADADADu7uTuAMAMAO4AAAAAwAwA7gAAAADADAAAAAAAAMDMzMzMzMzMzA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "s_table"
+    },
+    "image15": {
+        "data": "hwQQABAAAADMzMzMzMzMzAwAAAAAAADADAAAAAAAAMAMu7u7u7u7wAzb3d3d3b3ADNvd3d3dvcsM293d2t29wAy7u7u7u7vADNvd3drdvcAM293d3d29ywzb3d3d3b3NDNvd3d3dvcAMu7u7u7u7wAwAAAAAAADADAAAAAAAAMDMzMzMzMzMzA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "s_cabinet"
+    },
+    "image16": {
+        "data": "hwQQABAAAADMzMzMzMzMzAwAAAAAAADADAAAAAAAAMAMAEQAACICwAxAREQkIkLEDEBEACAiAsQMQEREIiICwAxARAAiIkLEDEBEACIiAsQMQEREIiICwAxARAAgIkLEDEBERCQiAsAMAEQAACJCxAwAAAAAAADADAAAAAAAAMDMzMzMzMzMzA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "s_chair"
+    },
+    "image17": {
+        "data": "hwQQABAAAADMzMzMzMzMzAwAAAAAAADADAAAAAAAAMAMAAAAAwAAwAx3AOAzAwDADHAH4LM7M8AMAHfgM7s7wwwAcHczM7PDfAd34DMzM8MMdwfgMzMzwwwAd+czMzPDDHcH4DMzA8AMAAAAMwAAwAwAAAAAAADADAAAAAAAAMDMzMzMzMzMzA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "s_flower"
+    },
+    "image18": {
+        "data": "hwQQABAAAADMzMzMzMzMzAwAAAAAAADADAAAAAAAAMAMAAAAAAAAwAwAALC7uwvADAAAubu7u8sMAACJu7u7ywwAAIm7u7vLDAAAibu7u8sMAACJu7u7ywwAAJm7u7vLDAAAmbu7u8AMAAAACwAAwAwAAAAAAADADAAAAAAAAMDMzMzMzMzMzA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "s_water"
+    },
+    "image19": {
+        "data": "hwQQABAAAADMzMzMzMzMzAwAAO7r7g7ADAAA5w4AAMAMAAB3DgAAwAwAAADuvu7ADAAAUA4AAMAMAABQDgAAwAwAAFAOAADADAAAUA4AAMAMAABQDgAAwAwAAFAOAADADAAAUO7uDsAMAABQDgAAwAwAAAC77u7ADAAAAAAAAMDMzMzMzMzMzA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "s_bed"
+    },
     "image12": {
-        "data": "hwQQABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+        "data": "hwQQABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHB3dwcAAAAAcAAAdwAAAABwAABwAAAAAHcAAHDu7u4ABwAAcAAAAABwAAB3AAAAAHAHdwcAAAAAAHAHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
         "mimeType": "image/x-mkcd-f4",
         "displayName": "TreeAnim"
+    },
+    "image20": {
+        "data": "hwQQABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAmQAAAAAAAACWAAAAAAAAAJ7u7u4AAAAAmQAADgAAAJCWCQAAAAAAaZmZAAAAAACZmZkAAAAAkJaZmQkAAAAAmZmWCQAAAAAAAAAAAAAAAAAAAAAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "s_axe"
     },
     "anim1": {
         "namespace": "myAnimations",

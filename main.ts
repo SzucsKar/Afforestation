@@ -20,6 +20,7 @@ let lastVelocity = direction.Right
 // Hero pályaszint kező helyzete
 let xHero = 0
 let yHero = 0
+let gHero = false
 
 // a pályaszinteken használt változók
 let goalCountOfTreasure = 0
@@ -67,29 +68,33 @@ namespace m_levels {
             game.showLongText(
                 "Fuss! Siess a házba a szerszámokért, hogy metsd, amit még lehet!\n" +
                 "Igyekezz!!! Megy az idő!", DialogLayout.Bottom)
-            info.startCountdown(60)
-            tiles.setCurrentTilemap(tilemap`level9`)
-            music.play(music.createSong(assets.song`Level1_BGsong`), music.PlaybackMode.LoopingInBackground)
             goalCountOfTreasure += 0
+            tiles.setCurrentTilemap(tilemap`level9`)
+            //music.play(music.createSong(assets.song`Level1_BGsong`), music.PlaybackMode.LoopingInBackground)
+            info.startCountdown(60)
             xHero = 24
             yHero = 424
-            InitialLevel(xHero, yHero)
+            gHero = true
+            InitialLevel(xHero, yHero, gHero)
         } else if (num == 2) {
-            scene.setBackgroundColor(8)
-            game.showLongText("Bent vagy a házban. Nagy a kupleráj.", DialogLayout.Bottom)
-            game.showLongText("Tologasd el a tárgyakat, hogy elérj a baltáig!", DialogLayout.Bottom)
-            tiles.setCurrentTilemap(tilemap`level8`)
-            goalCountOfTreasure += 12
+            scene.setBackgroundColor(15)
+            game.showLongText(
+                "Bent vagy a házban. Nagy a kupleráj.\n" +
+                "Tologasd el a tárgyakat, hogy elérj a baltáig!", DialogLayout.Bottom)
+            goalCountOfTreasure += 0
+            tiles.setCurrentTilemap(tilemap`level15`)
+            info.startCountdown(60)
             xHero = 24
             yHero = 200
-            InitialLevel(xHero, yHero)
+            gHero = false
+            InitialLevel(xHero, yHero, gHero)
         } else {
             game.setGameOverEffect(true, effects.confetti)
             game.gameOver(true)
         }
     }
     // SZINT INDÍTÁSA
-    function InitialLevel(xStartPos: number, yStartPos: number) {
+    function InitialLevel(xStartPos: number, yStartPos: number, gravity: boolean) {
         // Töröljük a megmaradt enemy-t
         sprites.destroyAllSpritesOfKind(SpriteKind.Enemy)
         sprites.destroyAllSpritesOfKind(SpriteKind.Woodcutter)
@@ -99,7 +104,7 @@ namespace m_levels {
         info.setLife(10)
         Hero.setPosition(xStartPos, yStartPos)
         Hero.vy = 0
-        Hero.ay = 300
+        if(gravity){Hero.ay = 300}
         scene.cameraFollowSprite(Hero)
         controller.moveSprite(Hero, 100, 0)
 
