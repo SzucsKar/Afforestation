@@ -68,8 +68,6 @@ namespace myTiles {
     export const tile25 = image.ofBuffer(hex``);
     //% fixedInstance jres blockIdentity=images._tile
     export const transparency16 = image.ofBuffer(hex``);
-    //% fixedInstance jres blockIdentity=images._tile
-    export const tile50 = image.ofBuffer(hex``);
 
     helpers._registerFactory("tilemap", function(name: string) {
         switch(helpers.stringTrim(name)) {
@@ -212,18 +210,18 @@ namespace myTiles {
 2222222222222222
 `, [myTiles.transparency16,myTiles.tile1,myTiles.tile2,myTiles.tile32,myTiles.tile5,myTiles.tile8,myTiles.tile13,myTiles.tile11,myTiles.tile15,myTiles.tile23,myTiles.tile31,myTiles.tile17,myTiles.tile33], TileScale.Sixteen);
             case "level_15":
-            case "level10":return tiles.createTilemap(hex`0a000a000101010101010101010101000000000000000001010000000000000000010100000000000000000101000000000000000001010000000001010101010100000000010202020901000000000b0303030401000000000c060608050101010101010a0a0705`, img`
+            case "level10":return tiles.createTilemap(hex`0a000a000101010101010101010101000000000d0000000101000000000d000000010100000000000000000101000000000d00000001010d000d0d01010101010100000000010202020901000000000b0303030401000000000c060608050101010101010a0a0705`, img`
 2 2 2 2 2 2 2 2 2 2 
+2 . . . . 2 . . . 2 
+2 . . . . 2 . . . 2 
 2 . . . . . . . . 2 
-2 . . . . . . . . 2 
-2 . . . . . . . . 2 
-2 . . . . . . . . 2 
-2 . . . . 2 2 2 2 2 
+2 . . . . 2 . . . 2 
+2 2 . 2 2 2 2 2 2 2 
 2 . . . . 2 2 2 2 2 
 2 . . . . . . . . . 
 2 . . . . . . . . . 
 2 2 2 2 2 2 2 2 . . 
-`, [myTiles.transparency16,sprites.dungeon.floorDark0,sprites.castle.tileGrass1,sprites.castle.tilePath2,sprites.castle.tilePath3,sprites.castle.tilePath6,sprites.castle.tilePath8,sprites.castle.tilePath4,sprites.castle.tilePath5,sprites.castle.tileGrass2,sprites.castle.tileGrass3,sprites.vehicle.roadIntersection3,sprites.vehicle.roadIntersection1], TileScale.Sixteen);
+`, [myTiles.transparency16,sprites.dungeon.floorDark0,sprites.castle.tileGrass1,sprites.castle.tilePath2,sprites.castle.tilePath3,sprites.castle.tilePath6,sprites.castle.tilePath8,sprites.castle.tilePath4,sprites.castle.tilePath5,sprites.castle.tileGrass2,sprites.castle.tileGrass3,sprites.vehicle.roadIntersection3,sprites.vehicle.roadIntersection1,sprites.dungeon.floorLight0], TileScale.Sixteen);
         }
         return null;
     })
@@ -298,8 +296,6 @@ namespace myTiles {
             case "tile25":return tile25;
             case "baseTransparency16":
             case "transparency16":return transparency16;
-            case "floorLight4":
-            case "tile50":return tile50;
         }
         return null;
     })

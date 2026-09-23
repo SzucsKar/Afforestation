@@ -203,12 +203,6 @@
         "tilemapTile": true,
         "displayName": "baseTransparency16"
     },
-    "tile50": {
-        "data": "hwQQABAAAAAdERGxu7u7u9Hd3b0dERGx0d3dvdHd3b3R3d290d3dvdHd3b3R3d290d3dvdHd3b3R3d3d0d3dvbu7u+3R3bvbHRERsbu7Ee3R3d29HdHd3dHd3b3R3d290d3dvdHd3b3R3d290d3dvdHd3b3R3d290d3d3dHd3b27u7vtu7u77Q==",
-        "mimeType": "image/x-mkcd-f4",
-        "tilemapTile": true,
-        "displayName": "floorLight4"
-    },
     "level2": {
         "id": "level2",
         "mimeType": "application/mkcd-tilemap",
@@ -364,7 +358,7 @@
     "level10": {
         "id": "level10",
         "mimeType": "application/mkcd-tilemap",
-        "data": "MTAwYTAwMGEwMDAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMDAwMDAwMDAwMDAwMDAwMDEwMTAwMDAwMDAwMDAwMDAwMDAwMTAxMDAwMDAwMDAwMDAwMDAwMDAxMDEwMDAwMDAwMDAwMDAwMDAwMDEwMTAwMDAwMDAwMDEwMTAxMDEwMTAxMDAwMDAwMDAwMTAyMDIwMjA5MDEwMDAwMDAwMDBiMDMwMzAzMDQwMTAwMDAwMDAwMGMwNjA2MDgwNTAxMDEwMTAxMDEwMTBhMGEwNzA1MjIyMjIyMjIyMjAyMDAwMDAwMjAwMjAwMDAwMDIwMDIwMDAwMDAyMDAyMDAwMDAwMjAwMjAwMjAyMjIyMDIwMDIwMjIyMjAyMDAwMDAwMDAwMjAwMDAwMDAwMjIyMjIyMjIwMA==",
+        "data": "MTAwYTAwMGEwMDAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMDAwMDAwMDBkMDAwMDAwMDEwMTAwMDAwMDAwMGQwMDAwMDAwMTAxMDAwMDAwMDAwMDAwMDAwMDAxMDEwMDAwMDAwMDBkMDAwMDAwMDEwMTBkMDAwZDBkMDEwMTAxMDEwMTAxMDAwMDAwMDAwMTAyMDIwMjA5MDEwMDAwMDAwMDBiMDMwMzAzMDQwMTAwMDAwMDAwMGMwNjA2MDgwNTAxMDEwMTAxMDEwMTBhMGEwNzA1MjIyMjIyMjIyMjAyMDAyMDAwMjAwMjAwMjAwMDIwMDIwMDAwMDAyMDAyMDAyMDAwMjAyMjIwMjIyMjIyMDIwMDIwMjIyMjAyMDAwMDAwMDAwMjAwMDAwMDAwMjIyMjIyMjIwMA==",
         "tileset": [
             "myTiles.transparency16",
             "sprites.dungeon.floorDark0",
@@ -378,7 +372,8 @@
             "sprites.castle.tileGrass2",
             "sprites.castle.tileGrass3",
             "sprites.vehicle.roadIntersection3",
-            "sprites.vehicle.roadIntersection1"
+            "sprites.vehicle.roadIntersection1",
+            "sprites.dungeon.floorLight0"
         ],
         "displayName": "level_15"
     },

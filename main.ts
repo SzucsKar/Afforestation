@@ -1,8 +1,9 @@
 
+
 namespace SpriteKind {
     export const Finish = SpriteKind.create();
     export const Woodcutter = SpriteKind.create();
-
+    export const SokoSprite = SpriteKind.create();
 }
 
 // a Hero helyzete a tile(létra)-n belül
@@ -10,17 +11,26 @@ let ladderCenter2 = false
 let ladderLeft2 = false
 let ladderRight2 = false
 let ladderCol2 = 0
+
 // Hero mozgásához
 enum tool { None, Tree, Axe, Spade, Pearl, Projectile }
 let inHand = tool.None
 let JumpingNow = false
-enum direction { Right, Left }
+enum direction { Right, Left, Up, Down }
 let lastVelocity = direction.Right
 
-// Hero pályaszint kező helyzete
+// SOKO mozgásához
+enum SokoTileState {Clear, Wall, SokoSprite}
+
+// SOKO játék raszter kiosztása (16*16px)
+let sokoRowHero = 0
+let sokoColHero = 0
+
+// Hero pályaszint kezdő helyzete
 let xHero = 0
 let yHero = 0
 let gHero = false
+
 
 // a pályaszinteken használt változók
 let goalCountOfTreasure = 0
@@ -28,6 +38,26 @@ let TimeBonus = 0
 let totalSeconds = 0
 let currentLevel = 1
 let projectile = null
+enum GameMode { soko, platform }
+let gameMode = GameMode.platform
+
+// SokoSprite random helyei a 2. pályához
+let layouts =[
+    [[1, 1], [1, 2], [1, 3], [1, 4], [1, 5], [1, 6], [1, 7]],
+    [[2, 1], [2, 2], [2, 3], [2, 4], [2, 5], [2, 6], [2, 7]],
+    [[3, 1], [3, 2], [3, 3], [3, 4], [3, 5], [3, 6], [3, 7]],
+    [[4, 1], [4, 2], [4, 3], [4, 4], [4, 5], [4, 6], [4, 7]]
+]
+// SokoSprite random képei a 2. pályához
+let spriteSet: Image [] = [
+    assets.image`s_bicycle`,
+    assets.image`s_table`,
+    assets.image`s_cabinet`,
+    assets.image`s_chair`,
+    assets.image`s_flower`,
+    assets.image`s_water`,
+    assets.image`s_bed`
+]
 
 // A Hero-t már itt létrehozzuk, hogy a háttérben futó események ne keressék hiába
 let Hero = sprites.create(assets.image`Mario`, SpriteKind.Player)
@@ -39,54 +69,65 @@ forever(function () {
         lastVelocity = direction.Right;
     } else if (Hero.vx < 0) {
         lastVelocity = direction.Left;
+    } else if (Hero.vy < 0) {
+        lastVelocity = direction.Up;
+    } else if (Hero.vy > 0) {
+        lastVelocity = direction.Down
     }
 })
 
 // Intro rész itt következik majd
 info.setScore(0)
 info.setLife(10)
+scene.setBackgroundColor(13)
+game.showLongText(
+    "Sötétedik...\n" +
+    "Furcsa rovarok jelentek meg az erdőben.\n" +
+    "Hallod, ahogy recsegnek az ágak, zizegnek a levelek.", DialogLayout.Bottom)
+music.play(music.createSong(assets.song`Level1_BGsong`), music.PlaybackMode.LoopingInBackground)
+scene.setBackgroundColor(12)
+game.showLongText(
+    "Úgy döntesz, kimész a fák közé és megnézed mi történik.\n" +
+    "A rovarok a fákat pusztítják. Mindent megesznek, ami az útjukba kerül", DialogLayout.Bottom)
 m_levels.NextLevel(1)
+
 
 
 
 namespace m_levels {
     // SZINTEK BEVEZETÉSE ÉS INDULÁSI PARAMÉTEREI
     export function NextLevel(num: number) {
-        if (num == 1) {
-            info.showScore(false)
-            info.showLife(false)
-            scene.setBackgroundColor(13)
-            game.showLongText(
-                "Sötétedik...\n" +
-                "Furcsa rovarok jelentek meg az erdőben.\n" +
-                "Hallod, ahogy recsegnek az ágak, zizegnek a levelek.", DialogLayout.Bottom)
-            scene.setBackgroundColor(12)
-            game.showLongText(
-                "Úgy döntesz, kimész a fák közé és megnézed mi történik.\n" +
-                "A rovarok a fákat pusztítják. Mindent megesznek, ami az útjukba kerül", DialogLayout.Bottom)
+        if (num == 2) {
             scene.setBackgroundColor(15)
             game.showLongText(
                 "Fuss! Siess a házba a szerszámokért, hogy metsd, amit még lehet!\n" +
                 "Igyekezz!!! Megy az idő!", DialogLayout.Bottom)
-            goalCountOfTreasure += 0
             tiles.setCurrentTilemap(tilemap`level9`)
-            //music.play(music.createSong(assets.song`Level1_BGsong`), music.PlaybackMode.LoopingInBackground)
+            info.showScore(false)
+            info.showLife(false)
+            info.showCountdown(true)
+            goalCountOfTreasure += 0
             info.startCountdown(60)
-            xHero = 24
-            yHero = 424
-            gHero = true
+            info.setLife(10)
+            
+            gameMode = GameMode.platform
+            xHero = 24; yHero = 424; gHero = true
             InitialLevel(xHero, yHero, gHero)
-        } else if (num == 2) {
+        } else if (num == 1) {
             scene.setBackgroundColor(15)
             game.showLongText(
                 "Bent vagy a házban. Nagy a kupleráj.\n" +
                 "Tologasd el a tárgyakat, hogy elérj a baltáig!", DialogLayout.Bottom)
+            scene.setBackgroundColor(9)
+            tiles.setCurrentTilemap(tilemap`level_15`)
+            info.showScore(false)
+            info.showLife(false)
+            info.showCountdown(true)
             goalCountOfTreasure += 0
-            tiles.setCurrentTilemap(tilemap`level15`)
             info.startCountdown(60)
-            xHero = 24
-            yHero = 200
-            gHero = false
+            info.setLife(10)
+            gameMode = GameMode.soko
+            xHero = 136; yHero = 136; gHero = false
             InitialLevel(xHero, yHero, gHero)
         } else {
             game.setGameOverEffect(true, effects.confetti)
@@ -98,34 +139,63 @@ namespace m_levels {
         // Töröljük a megmaradt enemy-t
         sprites.destroyAllSpritesOfKind(SpriteKind.Enemy)
         sprites.destroyAllSpritesOfKind(SpriteKind.Woodcutter)
+        sprites.destroyAllSpritesOfKind(SpriteKind.SokoSprite)
 
-        // Megjelenítjük a Hero-t
+        // Megjelenítjük a Hero-t és beállítjuk a mozgását
         Hero.setFlag(SpriteFlag.Invisible, false)
-        info.setLife(10)
         Hero.setPosition(xStartPos, yStartPos)
-        Hero.vy = 0
-        if(gravity){Hero.ay = 300}
         scene.cameraFollowSprite(Hero)
-        controller.moveSprite(Hero, 100, 0)
+        
+        if (gameMode == GameMode.platform){
+            Hero.vy = 0
+            Hero.ay = 300
+            controller.moveSprite(Hero, 100, 0)
+        }
+        if (gameMode == GameMode.soko){
+            Hero.vx = 0
+            Hero.vy = 0
+            Hero.ax = 0
+            Hero.ay = 0
+            controller.moveSprite(Hero, 0, 0)
+            sokoColHero = (xHero-8)/16
+            sokoRowHero = (yHero-8)/16
+        }
 
-        // Megjelenítjük az Enemy-t és Woodcutter-t
+        // Megjelenítjük az Enemy-t és Woodcutter-t vagy a SOKO elemeket
         let Bug = null
-        for (let value of tiles.getTilesByType(assets.tile`BackGrStoneBugStart`)) {
-            Bug = sprites.create(assets.image`Bug`, SpriteKind.Enemy)
-            tiles.placeOnTile(Bug, value)
-            Bug.vx = 15
-            Bug.ay = 300
+        if (gameMode == GameMode.platform){
+            for (let value of tiles.getTilesByType(assets.tile`BackGrStoneBugStart`)) {
+                Bug = sprites.create(assets.image`Bug`, SpriteKind.Enemy)
+                tiles.placeOnTile(Bug, value)
+                Bug.vx = 15
+                Bug.ay = 300
+            }
+            for (let value of tiles.getTilesByType(assets.tile`BackGrkyFlierStart`)) {
+                Bug = sprites.create(assets.image`Flier`, SpriteKind.Enemy)
+                tiles.placeOnTile(Bug, value)
+                Bug.vx = 15
+            }
+            for (let value of tiles.getTilesByType(assets.tile`BackGrWoodcutterStart`)) {
+                Bug = sprites.create(assets.image`Woodcutter`, SpriteKind.Woodcutter)
+                tiles.placeOnTile(Bug, value)
+                Bug.vx = 15
+                Bug.ay = 300
+            }
         }
-        for (let value of tiles.getTilesByType(assets.tile`BackGrkyFlierStart`)) {
-            Bug = sprites.create(assets.image`Flier`, SpriteKind.Enemy)
-            tiles.placeOnTile(Bug, value)
-            Bug.vx = 15
-        }
-        for (let value of tiles.getTilesByType(assets.tile`BackGrWoodcutterStart`)) {
-            Bug = sprites.create(assets.image`Woodcutter`, SpriteKind.Woodcutter)
-            tiles.placeOnTile(Bug, value)
-            Bug.vx = 15
-            Bug.ay = 300
+        if (gameMode == GameMode.soko){
+            //Véletlen layouts kiválasztása és a SokoSprite-k felhelyezése
+            let spritek: Sprite[] = []
+            let rnd = randint(0, layouts.length - 1)
+            console.log ("Véletlen pálya:" + rnd)
+            let selectedLayout = layouts[rnd]
+            for (let i = 0; i < selectedLayout.length; i++) {
+                let x = selectedLayout[i][0]
+                let y = selectedLayout[i][1]
+                let ujSprite = sprites.create(spriteSet[i], SpriteKind.SokoSprite)
+                ujSprite.setPosition(x * 16 + 8, y * 16 + 8)
+                spritek.push(ujSprite)
+                console.log("Koordináta: " + x + "," + y)                
+            }
         }
     }
     // SZINT ZÁRÁSRA
@@ -160,6 +230,134 @@ namespace m_levels {
 }
 
 namespace m_hero {
+    
+    function GetSokoAt(checkedCol: number, checkedRow:number): Sprite {
+        for (let soko of sprites.allOfKind(SpriteKind.SokoSprite)) {
+            let loc = soko.tilemapLocation()
+            if (loc.column == checkedCol && loc.row == checkedRow) {
+                return soko
+            }
+        }
+        return null
+    }
+    
+    function CheckSokoTile(checkedCol: number, checkedRow: number): SokoTileState {
+        if (tiles.tileAtLocationIsWall(
+            tiles.getTileLocation(checkedCol, checkedRow))) {
+            return SokoTileState.Wall
+        }
+        for (let soko of sprites.allOfKind(SpriteKind.SokoSprite)) {
+            let loc = soko.tilemapLocation()
+
+            if (loc.column == checkedCol && loc.row == checkedRow) {
+                return SokoTileState.SokoSprite
+            }
+        }
+        return SokoTileState.Clear     
+    }
+
+    function SokoMovingLogic(displCol:number, displRow:number){
+        if (CheckSokoTile(sokoColHero + displCol, sokoRowHero + displRow) == SokoTileState.Clear) {
+            sokoColHero += displCol; sokoRowHero += displRow
+            Hero.setPosition(sokoColHero * 16 + 8, sokoRowHero * 16 + 8)
+        }
+        else if (CheckSokoTile(sokoColHero + displCol, sokoRowHero + displRow) == SokoTileState.Wall) {
+            music.magicWand
+        }
+        else if (CheckSokoTile(sokoColHero + displCol, sokoRowHero + displRow) == SokoTileState.SokoSprite) {
+            if (CheckSokoTile(sokoColHero + displCol*2, sokoRowHero + displRow*2) == SokoTileState.Clear) {
+                sokoColHero += displCol; sokoRowHero += displRow
+                Hero.setPosition(sokoColHero * 16 + 8, sokoRowHero * 16 + 8)
+                GetSokoAt(sokoColHero, sokoRowHero).setPosition((sokoColHero + displCol) * 16 + 8, (sokoRowHero + displRow) * 16 + 8)
+            }
+            else if (CheckSokoTile(sokoColHero + displCol * 2, sokoRowHero + displRow * 2) == SokoTileState.Wall) {
+                music.magicWand
+            }
+            else if (CheckSokoTile(sokoColHero + displCol * 2, sokoRowHero + displRow * 2) == SokoTileState.SokoSprite) {
+                music.magicWand
+            }
+        }
+    }
+
+    controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
+        if (gameMode == GameMode.platform) {
+            HeroJump()
+        }
+        if (gameMode == GameMode.soko) {
+            SokoMovingLogic(0,-1)
+        }
+    })
+    controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
+        if (gameMode == GameMode.platform) {
+            return
+        }
+        if (gameMode == GameMode.soko) {
+            SokoMovingLogic(0, 1)
+        }
+    })
+    controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
+        if (gameMode == GameMode.platform) {
+            return
+        }
+        if (gameMode == GameMode.soko) {
+            SokoMovingLogic(1, 0)
+        }
+    })
+    controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
+        if (gameMode == GameMode.platform) {
+            return
+        }
+        if (gameMode == GameMode.soko) {
+            SokoMovingLogic(-1, 0)
+        }
+    })
+
+
+    controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
+        if (gameMode == GameMode.platform) {
+            HeroJump()
+        }
+    })
+    controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
+        if(gameMode == GameMode.platform){
+            // TÁRGYAK FELVÉTELE VAGY LÖVÉS
+            if (inHand = tool.None && Hero.tileKindAt(TileDirection.Center, assets.tile`TreeUPW`)) {
+                Hero.setImage(assets.image`MarioWtree`)
+                tiles.setTileAt(Hero.tilemapLocation(), assets.tile`transparency16`)
+                inHand = tool.Tree
+            } else if (inHand = tool.None && Hero.tileKindAt(TileDirection.Center, assets.tile`TreeDW`)) {
+                Hero.setImage(assets.image`MarioWtree`)
+                tiles.setTileAt(Hero.tilemapLocation(), assets.tile`BackGrStone`)
+                inHand = tool.Tree
+            } else if (inHand = tool.None && Hero.tileKindAt(TileDirection.Center, assets.tile`TreeDWW`)) {
+                Hero.setImage(assets.image`MarioWpearl`)
+                tiles.setTileAt(Hero.tilemapLocation(), assets.tile`BackGrStone`)
+                inHand = tool.Pearl
+            } else if (inHand = tool.None) {
+                projectile = sprites.createProjectileFromSprite(assets.image`projectile1`, Hero, 0, 0)
+                projectile.lifespan = 200
+                if (lastVelocity == direction.Right) {
+                    projectile.vx = 150
+                } else {
+                    projectile.vx = -150
+                }
+            }
+        }
+        if (gameMode == GameMode.soko) {
+            return
+        }
+    })
+    scene.onHitWall(SpriteKind.Player, function (sprite, location) {
+        if (gameMode == GameMode.platform) {
+            // Az ugrásból talajra érkezés
+            if (sprite.isHittingTile(CollisionDirection.Bottom)) {
+                JumpingNow = false
+            }
+        }
+        if (gameMode == GameMode.soko) {
+            return
+        }
+    })
     export function Damage(effect: effects.ParticleEffect, lightTouch: boolean, location?: tiles.Location): void {
         if (lightTouch) {
             if ( // könnyebb sérülés, csak akkor sebződik, ha vizszintesen 3 px-re belép és nem ugrik fel legalább 3 px magasra
@@ -176,12 +374,6 @@ namespace m_hero {
             music.play(music.melodyPlayable(music.powerDown), music.PlaybackMode.InBackground);
         }
     }
-    controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-        HeroJump()
-    })
-    controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
-        HeroJump()
-    })
     function HeroJump(): void {
         ladderCenter2 = Hero.tileKindAt(TileDirection.Center, assets.tile`Ladder`) || Hero.tileKindAt(TileDirection.Center, assets.tile`LadderGrass`) || Hero.tileKindAt(TileDirection.Center, assets.tile`LadderTransparent`)
         ladderLeft2 = Hero.tileKindAt(TileDirection.Left, assets.tile`Ladder`) || Hero.tileKindAt(TileDirection.Left, assets.tile`LadderGrass`) || Hero.tileKindAt(TileDirection.Left, assets.tile`LadderTransparent`)
@@ -207,36 +399,6 @@ namespace m_hero {
             JumpingNow = true
         }
     }
-    // Az ugrásból talajra érkezés
-    scene.onHitWall(SpriteKind.Player, function (sprite, location) {
-        if (sprite.isHittingTile(CollisionDirection.Bottom)) {
-            JumpingNow = false
-        }
-    })
-    // TÁRGYAK FELVÉTELE VAGY LÖVÉS (B GOMB)
-    controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
-        if (inHand = tool.None && Hero.tileKindAt(TileDirection.Center, assets.tile`TreeUPW`)) {
-            Hero.setImage(assets.image`MarioWtree`)
-            tiles.setTileAt(Hero.tilemapLocation(), assets.tile`transparency16`)
-            inHand = tool.Tree
-        } else if (inHand = tool.None && Hero.tileKindAt(TileDirection.Center, assets.tile`TreeDW`)) {
-            Hero.setImage(assets.image`MarioWtree`)
-            tiles.setTileAt(Hero.tilemapLocation(), assets.tile`BackGrStone`)
-            inHand = tool.Tree
-        } else if (inHand = tool.None && Hero.tileKindAt(TileDirection.Center, assets.tile`TreeDWW`)) {
-            Hero.setImage(assets.image`MarioWpearl`)
-            tiles.setTileAt(Hero.tilemapLocation(), assets.tile`BackGrStone`)
-            inHand = tool.Pearl
-        } else if (inHand = tool.None) {
-            projectile = sprites.createProjectileFromSprite(assets.image`projectile1`, Hero, 0, 0)
-            projectile.lifespan = 200
-            if (lastVelocity == direction.Right) {
-                projectile.vx = 150
-            } else {
-                projectile.vx = -150
-            }
-        }
-    })
 }
 
 namespace m_enemies {
