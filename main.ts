@@ -43,7 +43,7 @@ let gameMode = GameMode.platform
 
 // SokoSprite random helyei a 2. pályához
 let layouts =[
-    [[1, 1], [1, 2], [1, 3], [1, 4], [1, 5], [1, 6], [1, 7]],
+    [[2, 10], [9, 6], [5, 2], [4, 4], [8, 3], [3, 7], [2, 3]],
     [[2, 1], [2, 2], [2, 3], [2, 4], [2, 5], [2, 6], [2, 7]],
     [[3, 1], [3, 2], [3, 3], [3, 4], [3, 5], [3, 6], [3, 7]],
     [[4, 1], [4, 2], [4, 3], [4, 4], [4, 5], [4, 6], [4, 7]]
@@ -84,7 +84,7 @@ game.showLongText(
     "Sötétedik...\n" +
     "Furcsa rovarok jelentek meg az erdőben.\n" +
     "Hallod, ahogy recsegnek az ágak, zizegnek a levelek.", DialogLayout.Bottom)
-music.play(music.createSong(assets.song`Level1_BGsong`), music.PlaybackMode.LoopingInBackground)
+//music.play(music.createSong(assets.song`Level1_BGsong`), music.PlaybackMode.LoopingInBackground)
 scene.setBackgroundColor(12)
 game.showLongText(
     "Úgy döntesz, kimész a fák közé és megnézed mi történik.\n" +
@@ -97,7 +97,7 @@ m_levels.NextLevel(1)
 namespace m_levels {
     // SZINTEK BEVEZETÉSE ÉS INDULÁSI PARAMÉTEREI
     export function NextLevel(num: number) {
-        if (num == 2) {
+        if (num == 1) {
             scene.setBackgroundColor(15)
             game.showLongText(
                 "Fuss! Siess a házba a szerszámokért, hogy metsd, amit még lehet!\n" +
@@ -113,7 +113,7 @@ namespace m_levels {
             gameMode = GameMode.platform
             xHero = 24; yHero = 424; gHero = true
             InitialLevel(xHero, yHero, gHero)
-        } else if (num == 1) {
+        } else if (num == 2) {
             scene.setBackgroundColor(15)
             game.showLongText(
                 "Bent vagy a házban. Nagy a kupleráj.\n" +
@@ -127,7 +127,7 @@ namespace m_levels {
             info.startCountdown(60)
             info.setLife(10)
             gameMode = GameMode.soko
-            xHero = 136; yHero = 136; gHero = false
+            xHero = 168; yHero = 200; gHero = false
             InitialLevel(xHero, yHero, gHero)
         } else {
             game.setGameOverEffect(true, effects.confetti)
@@ -185,7 +185,7 @@ namespace m_levels {
         if (gameMode == GameMode.soko){
             //Véletlen layouts kiválasztása és a SokoSprite-k felhelyezése
             let spritek: Sprite[] = []
-            let rnd = randint(0, layouts.length - 1)
+            let rnd = 0 //randint(0, layouts.length - 1)
             console.log ("Véletlen pálya:" + rnd)
             let selectedLayout = layouts[rnd]
             for (let i = 0; i < selectedLayout.length; i++) {
@@ -257,24 +257,28 @@ namespace m_hero {
     }
 
     function SokoMovingLogic(displCol:number, displRow:number){
-        if (CheckSokoTile(sokoColHero + displCol, sokoRowHero + displRow) == SokoTileState.Clear) {
+        let State = CheckSokoTile(sokoColHero + displCol, sokoRowHero + displRow)
+        if (State == SokoTileState.Clear) {
             sokoColHero += displCol; sokoRowHero += displRow
             Hero.setPosition(sokoColHero * 16 + 8, sokoRowHero * 16 + 8)
+            music.play(music.melodyPlayable(music.footstep), music.PlaybackMode.InBackground);
         }
-        else if (CheckSokoTile(sokoColHero + displCol, sokoRowHero + displRow) == SokoTileState.Wall) {
-            music.magicWand
+        else if (State == SokoTileState.Wall) {
+            music.play(music.melodyPlayable(music.knock), music.PlaybackMode.InBackground);
         }
-        else if (CheckSokoTile(sokoColHero + displCol, sokoRowHero + displRow) == SokoTileState.SokoSprite) {
-            if (CheckSokoTile(sokoColHero + displCol*2, sokoRowHero + displRow*2) == SokoTileState.Clear) {
+        else if (State == SokoTileState.SokoSprite) {
+            let NextState = CheckSokoTile(sokoColHero + displCol * 2, sokoRowHero + displRow * 2)
+            if ( NextState == SokoTileState.Clear) {
                 sokoColHero += displCol; sokoRowHero += displRow
                 Hero.setPosition(sokoColHero * 16 + 8, sokoRowHero * 16 + 8)
                 GetSokoAt(sokoColHero, sokoRowHero).setPosition((sokoColHero + displCol) * 16 + 8, (sokoRowHero + displRow) * 16 + 8)
+                music.play(music.melodyPlayable(music.zapped), music.PlaybackMode.InBackground);
             }
-            else if (CheckSokoTile(sokoColHero + displCol * 2, sokoRowHero + displRow * 2) == SokoTileState.Wall) {
-                music.magicWand
+            else if (NextState == SokoTileState.Wall) {
+                music.play(music.melodyPlayable(music.knock), music.PlaybackMode.InBackground);
             }
-            else if (CheckSokoTile(sokoColHero + displCol * 2, sokoRowHero + displRow * 2) == SokoTileState.SokoSprite) {
-                music.magicWand
+            else if (NextState == SokoTileState.SokoSprite) {
+                music.play(music.melodyPlayable(music.knock), music.PlaybackMode.InBackground);
             }
         }
     }
