@@ -373,7 +373,7 @@ c c c c c c c c c c c c c c c c
 . . . . . . . . . . . . . . . . 
 `;
             case "image20":
-            case "s_axe":return img`
+            case "AxeAnim":return img`
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
