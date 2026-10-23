@@ -33,6 +33,7 @@ let gHero = false
 
 
 // a pályaszinteken használt változók
+let resetedLevel = false
 let goalCountOfTreasure = 0
 let levelScore = 0
 let TimeBonus = 0
@@ -92,7 +93,7 @@ forever(function () {
 
 namespace intro{
     info.setScore(0)
-    info.setLife(10)
+    info.setLife(1)
     scene.setBackgroundColor(13)
     game.showLongText(
         "Egyik este furcsa rovarok jelentek meg az erdőben.\n", DialogLayout.Bottom)
@@ -113,11 +114,11 @@ namespace m_levels {
                 "Siess, megy az idő!", DialogLayout.Bottom)
             tiles.setCurrentTilemap(tilemap`level9`)
             info.showLife(false)
-            info.setLife(40)
+            info.setLife(1)
             info.showCountdown(true)
-            info.startCountdown(10)
+            info.startCountdown(50)
             info.showScore(false)
-            goalCountOfTreasure += 0
+            if(!resetedLevel){goalCountOfTreasure += 0}
             heroFire = false
             gameMode = GameMode.platform
             xHero = 24; yHero = 424; gHero = true
@@ -129,12 +130,12 @@ namespace m_levels {
             game.showLongText(
                 "Told el a tárgyakat, hogy ki tudd tolni a baltát a ládához!", DialogLayout.Bottom)
             tiles.setCurrentTilemap(tilemap`level_15`)
-            info.setLife(10)
+            info.setLife(1)
             info.showLife(false)
             info.showCountdown(true)
-            info.startCountdown(40)
+            info.startCountdown(60)
             info.showScore(false)
-            goalCountOfTreasure += 0
+            if (!resetedLevel) {goalCountOfTreasure += 0}
             heroFire = false
             gameMode = GameMode.soko
             xHero = 136; yHero = 120; gHero = false
@@ -149,11 +150,11 @@ namespace m_levels {
             game.showLongText(
                 "Szerezz meg 4 csemetét!", DialogLayout.Bottom)
             info.showLife(false)
-            info.setLife(10)
+            info.setLife(1)
             info.showCountdown(true)
             info.startCountdown(40)
             info.showScore(true)
-            goalCountOfTreasure += 4
+            if (!resetedLevel) {goalCountOfTreasure += 4}
             heroFire = false
             gameMode = GameMode.platform
             xHero = 120; yHero = 88; gHero = true
@@ -164,11 +165,11 @@ namespace m_levels {
             game.showLongText(
                 "Több kell! Érd el a 10 darabot!", DialogLayout.Bottom)
             info.showLife(false)
-            info.setLife(10)
+            info.setLife(1)
             info.showCountdown(true)
             info.startCountdown(70)
             info.showScore(true)
-            goalCountOfTreasure += 8
+            if (!resetedLevel) {goalCountOfTreasure += 6}
             heroFire = false
             gameMode = GameMode.platform
             xHero = 184; yHero = 56; gHero = true
@@ -179,16 +180,17 @@ namespace m_levels {
             game.showLongText(
                 "Utolsó esély, hogy meglegyen a 15 csemete!", DialogLayout.Bottom)
             info.showLife(false)
-            info.setLife(10)
+            info.setLife(2)
             info.showCountdown(true)
-            info.startCountdown(70)
+            info.startCountdown(80)
             info.showScore(true)
-            goalCountOfTreasure += 5
+            if (!resetedLevel) {goalCountOfTreasure += 5}
             heroFire = false
             gameMode = GameMode.platform
             xHero = 104; yHero = 40; gHero = true
             InitialLevel(xHero, yHero, gHero)
         } else {
+            info.changeScoreBy(TimeBonus)
             game.setGameOverEffect(true, effects.confetti)
             game.gameOver(true)
         }
@@ -306,6 +308,8 @@ namespace m_levels {
         TimeBonus += Math.round(360 / totalSeconds)
         game.showLongText("" + totalSeconds + " másodperc alatt", DialogLayout.Center)
         game.showLongText("" + TimeBonus + " időbónusz", DialogLayout.Bottom)
+        console.log("Szint lezárva: " + currentLevel + "| Időbónusz: " + TimeBonus)
+        resetedLevel = false
         currentLevel += 1
         NextLevel(currentLevel)
     }
@@ -314,6 +318,7 @@ namespace m_levels {
     info.onCountdownEnd(function () {
         if (game.ask("Újra játszod a pályát?")) {
             info.changeScoreBy(-levelScore)
+            resetedLevel = true
             m_levels.NextLevel(currentLevel)
         } else {
             game.setGameOverEffect(true, effects.blizzard)
