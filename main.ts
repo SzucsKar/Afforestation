@@ -34,6 +34,7 @@ let gHero = false
 
 // a pályaszinteken használt változók
 let goalCountOfTreasure = 0
+let levelScore = 0
 let TimeBonus = 0
 let totalSeconds = 0
 let currentLevel = 1
@@ -92,22 +93,15 @@ forever(function () {
 namespace intro{
     info.setScore(0)
     info.setLife(10)
-    
     scene.setBackgroundColor(13)
     game.showLongText(
-        "Sötétedik...\n" +
-        "Furcsa rovarok jelentek meg az erdőben.\n" +
-        "Hallod, ahogy recsegnek az ágak, zizegnek a levelek.", DialogLayout.Bottom)
+        "Egyik este furcsa rovarok jelentek meg az erdőben.\n", DialogLayout.Bottom)
     //music.play(music.createSong(assets.song`Level1_BGsong`), music.PlaybackMode.LoopingInBackground)
     scene.setBackgroundColor(12)
     game.showLongText(
-        "Úgy döntesz, kimész a fák közé és megnézed mi történik.\n" +
         "A rovarok a fákat pusztítják. Mindent megesznek, ami az útjukba kerül", DialogLayout.Bottom)
-    
     m_levels.NextLevel(1)
 }
-
-
 
 namespace m_levels {
     // SZINTEK BEVEZETÉSE ÉS INDULÁSI PARAMÉTEREI
@@ -115,51 +109,84 @@ namespace m_levels {
         if (num == 1) {
             scene.setBackgroundColor(15)
             game.showLongText(
-                "Fuss! Siess a házba a szerszámokért, hogy metsd, amit még lehet!\n" +
-                "Igyekezz!!! Megy az idő!", DialogLayout.Bottom)
+                "Menj a házba szerszámért, hogy metsd a fákat!\n" +
+                "Siess, megy az idő!", DialogLayout.Bottom)
             tiles.setCurrentTilemap(tilemap`level9`)
-            info.showScore(false)
             info.showLife(false)
+            info.setLife(40)
             info.showCountdown(true)
+            info.startCountdown(10)
+            info.showScore(false)
             goalCountOfTreasure += 0
-            info.startCountdown(60)
-            info.setLife(10)
-            heroFire = true
+            heroFire = false
             gameMode = GameMode.platform
             xHero = 24; yHero = 424; gHero = true
             InitialLevel(xHero, yHero, gHero)
         } else if (num == 2) {
-            scene.setBackgroundColor(15)
-            game.showLongText(
-                "Bent vagy a házban. Nagy a kupleráj.\n" +
-                "Mozgasd el a tárgyakat, hogy ki tudd tolni a házból a baltát a kerti ládába!", DialogLayout.Bottom)
             scene.setBackgroundColor(11)
+            game.showLongText(
+                "A házban nagy a kupi.", DialogLayout.Bottom)
+            game.showLongText(
+                "Told el a tárgyakat, hogy ki tudd tolni a baltát a ládához!", DialogLayout.Bottom)
             tiles.setCurrentTilemap(tilemap`level_15`)
-            info.showScore(false)
+            info.setLife(10)
             info.showLife(false)
             info.showCountdown(true)
-            goalCountOfTreasure += 0
             info.startCountdown(40)
-            info.setLife(10)
+            info.showScore(false)
+            goalCountOfTreasure += 0
             heroFire = false
             gameMode = GameMode.soko
             xHero = 136; yHero = 120; gHero = false
             InitialLevel(xHero, yHero, gHero)
         } else if (num == 3) {
             scene.setBackgroundColor(9)
-            game.showLongText(
-                "Rügyeket kell gyűjtened, hogy újra ültethesd az erdőt!\n" +
-                "Nincs sok időd! Gyűjts össze minél többet, mielőtt a rovarok megeszik.", DialogLayout.Bottom)
             tiles.setCurrentTilemap(tilemap`level31`)
-            info.showScore(true)
+            game.showLongText(
+                "Összesen 15 facsemetét kell gyűjtened, hogy újra ültethesd az erdőt.", DialogLayout.Bottom)
+            game.showLongText(
+                "Igyekezz, mert a rovarok megeszik!", DialogLayout.Bottom)
+            game.showLongText(
+                "Szerezz meg 4 csemetét!", DialogLayout.Bottom)
             info.showLife(false)
-            info.showCountdown(true)
-            goalCountOfTreasure += 6
-            info.startCountdown(40)
             info.setLife(10)
+            info.showCountdown(true)
+            info.startCountdown(40)
+            info.showScore(true)
+            goalCountOfTreasure += 4
             heroFire = false
             gameMode = GameMode.platform
             xHero = 120; yHero = 88; gHero = true
+            InitialLevel(xHero, yHero, gHero)
+        } else if (num == 4) {
+            scene.setBackgroundColor(9)
+            tiles.setCurrentTilemap(tilemap`level32`)
+            game.showLongText(
+                "Több kell! Érd el a 10 darabot!", DialogLayout.Bottom)
+            info.showLife(false)
+            info.setLife(10)
+            info.showCountdown(true)
+            info.startCountdown(70)
+            info.showScore(true)
+            goalCountOfTreasure += 8
+            heroFire = false
+            gameMode = GameMode.platform
+            xHero = 184; yHero = 56; gHero = true
+            InitialLevel(xHero, yHero, gHero)
+        } else if (num == 5) {
+            scene.setBackgroundColor(9)
+            tiles.setCurrentTilemap(tilemap`level33`)
+            game.showLongText(
+                "Utolsó esély, hogy meglegyen a 15 csemete!", DialogLayout.Bottom)
+            info.showLife(false)
+            info.setLife(10)
+            info.showCountdown(true)
+            info.startCountdown(70)
+            info.showScore(true)
+            goalCountOfTreasure += 5
+            heroFire = false
+            gameMode = GameMode.platform
+            xHero = 104; yHero = 40; gHero = true
             InitialLevel(xHero, yHero, gHero)
         } else {
             game.setGameOverEffect(true, effects.confetti)
@@ -172,6 +199,9 @@ namespace m_levels {
         sprites.destroyAllSpritesOfKind(SpriteKind.Enemy)
         sprites.destroyAllSpritesOfKind(SpriteKind.Woodcutter)
         sprites.destroyAllSpritesOfKind(SpriteKind.SokoSprite)
+
+        // Szintenként gyűjtött pontszámláló visszaállítása
+        levelScore = 0
 
         // Megjelenítjük a Hero-t és beállítjuk a mozgását
         Hero.setFlag(SpriteFlag.Invisible, false)
@@ -240,41 +270,57 @@ namespace m_levels {
             }
         }
     }
-    // SZINT ZÁRÁSRA
-    function CloseLevel() {
-        // Az eltelt idő kiszámítása (másodperc alapú finomítással)
-        totalSeconds = Math.round(game.runtime() / 1000)
-        TimeBonus = Math.round(360 / totalSeconds)
-        game.showLongText("" + totalSeconds + " másodperc alatt", DialogLayout.Center)
-        game.showLongText("" + TimeBonus + " idő bónuszt kaptál", DialogLayout.Bottom)
-        info.changeScoreBy(TimeBonus)
-        currentLevel += 1
-        NextLevel(currentLevel)
-    }
-    // LÁDA ÉS PONTOZÁS LOGIKÁJA
+
+    // LÁDA LEZÁRÁSA
     scene.onOverlapTile(SpriteKind.Player, assets.tile`TreasureOP`, function (sprite, location) {
         if (inHand != tool.None) {
             inHand = tool.None
             Hero.setImage(assets.image`Mario`)
             info.changeScoreBy(1)
+            levelScore += 1
             if (info.score() == goalCountOfTreasure) {
                 tiles.setTileAt(location, assets.tile`TreasureCl`)
                 music.play(music.melodyPlayable(music.powerDown), music.PlaybackMode.InBackground)
             }
         }
     })
+    
+    // CÉLTERÜLETEK ELÉRESE
     scene.onOverlapTile(SpriteKind.Player, assets.tile`TreasureCl`, function (sprite, location) {
         CloseLevel()
     })
     scene.onOverlapTile(SpriteKind.Player, assets.tile`House`, function (sprite, location) {
         CloseLevel()
     })
-    export function SokoWin (){
+    export function SokoWin() {
         console.log("végét ellenőrzöm")
-        if(tiles.tileAtLocationEquals(axe.tilemapLocation(),assets.tile`TreasureOP`)){
+        if (tiles.tileAtLocationEquals(axe.tilemapLocation(), assets.tile`TreasureOP`)) {
             CloseLevel()
         }
     }
+
+    // SZINT ZÁRÁSRA
+    function CloseLevel() {
+        // Az eltelt idő kiszámítása (másodperc alapú finomítással)
+        totalSeconds = Math.round(game.runtime() / 1000)
+        TimeBonus += Math.round(360 / totalSeconds)
+        game.showLongText("" + totalSeconds + " másodperc alatt", DialogLayout.Center)
+        game.showLongText("" + TimeBonus + " időbónusz", DialogLayout.Bottom)
+        currentLevel += 1
+        NextLevel(currentLevel)
+    }
+
+    // TIMEOUT KEZELÉSE
+    info.onCountdownEnd(function () {
+        if (game.ask("Újra játszod a pályát?")) {
+            info.changeScoreBy(-levelScore)
+            m_levels.NextLevel(currentLevel)
+        } else {
+            game.setGameOverEffect(true, effects.blizzard)
+            game.gameOver(true)
+        }
+    })
+
 }
 
 namespace m_hero {
