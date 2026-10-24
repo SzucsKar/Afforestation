@@ -37,7 +37,7 @@ let resetedLevel = false
 let goalCountOfTreasure = 0
 let levelScore = 0
 let TimeBonus = 0
-let totalSeconds = 0
+let remainingSeconds = 0
 let currentLevel = 1
 let projectile = null
 let heroFire = false
@@ -152,7 +152,7 @@ namespace m_levels {
             info.showLife(false)
             info.setLife(1)
             info.showCountdown(true)
-            info.startCountdown(40)
+            info.startCountdown(70)
             info.showScore(true)
             if (!resetedLevel) {goalCountOfTreasure += 4}
             heroFire = false
@@ -167,7 +167,7 @@ namespace m_levels {
             info.showLife(false)
             info.setLife(1)
             info.showCountdown(true)
-            info.startCountdown(70)
+            info.startCountdown(90)
             info.showScore(true)
             if (!resetedLevel) {goalCountOfTreasure += 6}
             heroFire = false
@@ -182,7 +182,7 @@ namespace m_levels {
             info.showLife(false)
             info.setLife(2)
             info.showCountdown(true)
-            info.startCountdown(80)
+            info.startCountdown(100)
             info.showScore(true)
             if (!resetedLevel) {goalCountOfTreasure += 5}
             heroFire = false
@@ -304,11 +304,11 @@ namespace m_levels {
     // SZINT ZÁRÁSRA
     function CloseLevel() {
         // Az eltelt idő kiszámítása (másodperc alapú finomítással)
-        totalSeconds = Math.round(game.runtime() / 1000)
-        TimeBonus += Math.round(360 / totalSeconds)
-        game.showLongText("" + totalSeconds + " másodperc alatt", DialogLayout.Center)
-        game.showLongText("" + TimeBonus + " időbónusz", DialogLayout.Bottom)
-        console.log("Szint lezárva: " + currentLevel + "| Időbónusz: " + TimeBonus)
+        remainingSeconds = info.countdown()
+        TimeBonus += Math.round(remainingSeconds*0.25)
+        game.showLongText("Szintet teljesítetted: " + currentLevel + TimeBonus, DialogLayout.Top)
+        game.showLongText("" + remainingSeconds + " másodperc maradtt", DialogLayout.Center)
+        game.showLongText("Kaptál" + TimeBonus + " időbónuszt", DialogLayout.Bottom)
         resetedLevel = false
         currentLevel += 1
         NextLevel(currentLevel)
@@ -316,7 +316,7 @@ namespace m_levels {
 
     // TIMEOUT KEZELÉSE
     info.onCountdownEnd(function () {
-        if (game.ask("Újra játszod a pályát?")) {
+        if (game.ask("Lejárt az idő! Újra játszod a pályát?")) {
             info.changeScoreBy(-levelScore)
             resetedLevel = true
             m_levels.NextLevel(currentLevel)
@@ -325,7 +325,16 @@ namespace m_levels {
             game.gameOver(true)
         }
     })
-
+    info.onLifeZero(function () {
+        if (game.ask("Elfogyott az életed! Újra játszod a pályát?")) {
+            info.changeScoreBy(-levelScore)
+            resetedLevel = true
+            m_levels.NextLevel(currentLevel)
+        } else {
+            game.setGameOverEffect(true, effects.blizzard)
+            game.gameOver(true)
+        }
+    })
 }
 
 namespace m_hero {
