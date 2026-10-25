@@ -1,5 +1,4 @@
 
-
 namespace SpriteKind {
     export const Finish = SpriteKind.create();
     export const Woodcutter = SpriteKind.create();
@@ -32,15 +31,22 @@ let yHero = 0
 let gHero = false
 
 
-// a pályaszinteken használt változók
+// Pályaszinteken használt változók
 let resetedLevel = false
 let goalCountOfTreasure = 0
 let levelScore = 0
 let TimeBonus = 0
+let levelBonus
 let remainingSeconds = 0
 let currentLevel = 1
 let projectile = null
 let heroFire = false
+
+
+// Általános beállítások változói
+let difficulty = false
+let selectedDifficulty = 0
+let difficultyFactor = [1.2,1.0]
 enum GameMode { soko, platform }
 let gameMode = GameMode.platform
 
@@ -92,12 +98,13 @@ forever(function () {
 })
 
 namespace intro{
+    difficulty = game.ask("A könnyebb módban játszol?","Ez hosszabb pályaidőt jelent.")
+    if (difficulty) {selectedDifficulty= 0 } else {selectedDifficulty=1 }
     info.setScore(0)
     info.setLife(1)
     scene.setBackgroundColor(13)
     game.showLongText(
         "Egyik este furcsa rovarok jelentek meg az erdőben.\n", DialogLayout.Bottom)
-    //music.play(music.createSong(assets.song`Level1_BGsong`), music.PlaybackMode.LoopingInBackground)
     scene.setBackgroundColor(12)
     game.showLongText(
         "A rovarok a fákat pusztítják. Mindent megesznek, ami az útjukba kerül", DialogLayout.Bottom)
@@ -110,13 +117,13 @@ namespace m_levels {
         if (num == 1) {
             scene.setBackgroundColor(15)
             game.showLongText(
-                "Menj a házba szerszámért, hogy metsd a fákat!\n" +
+                "Menj a házba szerszámért, hogy metsd a fákat!" +
                 "Siess, megy az idő!", DialogLayout.Bottom)
             tiles.setCurrentTilemap(tilemap`level9`)
             info.showLife(false)
             info.setLife(1)
             info.showCountdown(true)
-            info.startCountdown(50)
+            info.startCountdown(Math.round(50 * difficultyFactor[selectedDifficulty]))
             info.showScore(false)
             if(!resetedLevel){goalCountOfTreasure += 0}
             heroFire = false
@@ -133,7 +140,7 @@ namespace m_levels {
             info.setLife(1)
             info.showLife(false)
             info.showCountdown(true)
-            info.startCountdown(60)
+            info.startCountdown(Math.round(50 * difficultyFactor[selectedDifficulty]))
             info.showScore(false)
             if (!resetedLevel) {goalCountOfTreasure += 0}
             heroFire = false
@@ -152,7 +159,7 @@ namespace m_levels {
             info.showLife(false)
             info.setLife(1)
             info.showCountdown(true)
-            info.startCountdown(70)
+            info.startCountdown(Math.round(50 * difficultyFactor[selectedDifficulty]))
             info.showScore(true)
             if (!resetedLevel) {goalCountOfTreasure += 4}
             heroFire = false
@@ -167,7 +174,7 @@ namespace m_levels {
             info.showLife(false)
             info.setLife(1)
             info.showCountdown(true)
-            info.startCountdown(90)
+            info.startCountdown(Math.round(50 * difficultyFactor[selectedDifficulty]))
             info.showScore(true)
             if (!resetedLevel) {goalCountOfTreasure += 6}
             heroFire = false
@@ -182,7 +189,7 @@ namespace m_levels {
             info.showLife(false)
             info.setLife(2)
             info.showCountdown(true)
-            info.startCountdown(100)
+            info.startCountdown(Math.round(50 * difficultyFactor[selectedDifficulty]))
             info.showScore(true)
             if (!resetedLevel) {goalCountOfTreasure += 5}
             heroFire = false
@@ -305,28 +312,27 @@ namespace m_levels {
     function CloseLevel() {
         // Az eltelt idő kiszámítása (másodperc alapú finomítással)
         remainingSeconds = info.countdown()
-        TimeBonus += Math.round(remainingSeconds*0.25)
-        game.showLongText("Szintet teljesítetted: " + currentLevel + TimeBonus, DialogLayout.Top)
+        levelBonus = Math.round(remainingSeconds*0.25)
+        game.showLongText("Teljesítetted a " + currentLevel + ". szintet.", DialogLayout.Top)
         game.showLongText("" + remainingSeconds + " másodperc maradtt", DialogLayout.Center)
-        game.showLongText("Kaptál" + TimeBonus + " időbónuszt", DialogLayout.Bottom)
+        game.showLongText("Kaptál" + levelBonus + " időbónuszt", DialogLayout.Bottom)
         resetedLevel = false
+        TimeBonus += levelBonus
         currentLevel += 1
         NextLevel(currentLevel)
     }
 
     // TIMEOUT KEZELÉSE
     info.onCountdownEnd(function () {
-        if (game.ask("Lejárt az idő! Újra játszod a pályát?")) {
-            info.changeScoreBy(-levelScore)
-            resetedLevel = true
-            m_levels.NextLevel(currentLevel)
-        } else {
-            game.setGameOverEffect(true, effects.blizzard)
-            game.gameOver(true)
-        }
+        let text = "Lejárt az idő! Újra játszod a pályát?"
+        Retry(text)
     })
     info.onLifeZero(function () {
-        if (game.ask("Elfogyott az életed! Újra játszod a pályát?")) {
+        let text = "Elfogyott az életed! Újra játszod a pályát?"
+        Retry(text)
+    })
+    function Retry(text: string){
+        if (game.ask(text)) {
             info.changeScoreBy(-levelScore)
             resetedLevel = true
             m_levels.NextLevel(currentLevel)
@@ -334,7 +340,7 @@ namespace m_levels {
             game.setGameOverEffect(true, effects.blizzard)
             game.gameOver(true)
         }
-    })
+    }
 }
 
 namespace m_hero {
@@ -557,4 +563,3 @@ namespace events {
         tiles.setTileAt(location, assets.tile`TreeUPW0`);
     })
 }
-
