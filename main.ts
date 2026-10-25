@@ -119,7 +119,7 @@ namespace m_levels {
             game.showLongText(
                 "Menj a házba szerszámért, hogy metsd a fákat!" +
                 "Siess, megy az idő!", DialogLayout.Bottom)
-            tiles.setCurrentTilemap(tilemap`level9`)
+            tiles.setCurrentTilemap(tilemap`level_1`)
             info.showLife(false)
             info.setLife(1)
             info.showCountdown(true)
@@ -136,7 +136,7 @@ namespace m_levels {
                 "A házban nagy a kupi.", DialogLayout.Bottom)
             game.showLongText(
                 "Told el a tárgyakat, hogy ki tudd tolni a baltát a ládához!", DialogLayout.Bottom)
-            tiles.setCurrentTilemap(tilemap`level_15`)
+            tiles.setCurrentTilemap(tilemap`level_2`)
             info.setLife(1)
             info.showLife(false)
             info.showCountdown(true)
@@ -149,7 +149,7 @@ namespace m_levels {
             InitialLevel(xHero, yHero, gHero)
         } else if (num == 3) {
             scene.setBackgroundColor(9)
-            tiles.setCurrentTilemap(tilemap`level31`)
+            tiles.setCurrentTilemap(tilemap`level_31`)
             game.showLongText(
                 "Összesen 15 facsemetét kell gyűjtened, hogy újra ültethesd az erdőt.", DialogLayout.Bottom)
             game.showLongText(
@@ -168,7 +168,7 @@ namespace m_levels {
             InitialLevel(xHero, yHero, gHero)
         } else if (num == 4) {
             scene.setBackgroundColor(9)
-            tiles.setCurrentTilemap(tilemap`level32`)
+            tiles.setCurrentTilemap(tilemap`level_32`)
             game.showLongText(
                 "Több kell! Érd el a 10 darabot!", DialogLayout.Bottom)
             info.showLife(false)
@@ -183,7 +183,7 @@ namespace m_levels {
             InitialLevel(xHero, yHero, gHero)
         } else if (num == 5) {
             scene.setBackgroundColor(9)
-            tiles.setCurrentTilemap(tilemap`level33`)
+            tiles.setCurrentTilemap(tilemap`level_33`)
             game.showLongText(
                 "Utolsó esély, hogy meglegyen a 15 csemete!", DialogLayout.Bottom)
             info.showLife(false)
@@ -302,7 +302,6 @@ namespace m_levels {
         CloseLevel()
     })
     export function SokoWin() {
-        console.log("végét ellenőrzöm")
         if (tiles.tileAtLocationEquals(axe.tilemapLocation(), assets.tile`TreasureOP`)) {
             CloseLevel()
         }
