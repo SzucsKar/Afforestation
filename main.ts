@@ -51,7 +51,7 @@ enum GameMode { soko, platform }
 let gameMode = GameMode.platform
 
 // SokoSprite céltárgyai
-let axe: Sprite = null
+let targetSoko: Sprite = null
 
 // SokoSprite random helyei a 2. pályához
 let layouts =[
@@ -98,13 +98,13 @@ forever(function () {
 })
 
 namespace intro{
-    difficulty = game.ask("A könnyebb módban játszol?","Ez hosszabb pályaidőt jelent.")
+    difficulty = game.ask("Könnyű játék?","(Hosszabb pályaidővel)")
     if (difficulty) {selectedDifficulty= 0 } else {selectedDifficulty=1 }
     info.setScore(0)
     info.setLife(1)
     scene.setBackgroundColor(13)
     game.showLongText(
-        "Egyik este furcsa rovarok jelentek meg az erdőben.\n", DialogLayout.Bottom)
+        "Egyik este furcsa rovarok jelentek meg az erdőben.", DialogLayout.Bottom)
     scene.setBackgroundColor(12)
     game.showLongText(
         "A rovarok a fákat pusztítják. Mindent megesznek, ami az útjukba kerül", DialogLayout.Bottom)
@@ -117,8 +117,7 @@ namespace m_levels {
         if (num == 1) {
             scene.setBackgroundColor(15)
             game.showLongText(
-                "Menj a házba szerszámért, hogy metsd a fákat!" +
-                "Siess, megy az idő!", DialogLayout.Bottom)
+                "Menj a házba szerszámért! Siess, megy az idő!", DialogLayout.Bottom)
             tiles.setCurrentTilemap(tilemap`level_1`)
             info.showLife(false)
             info.setLife(1)
@@ -133,14 +132,12 @@ namespace m_levels {
         } else if (num == 2) {
             scene.setBackgroundColor(11)
             game.showLongText(
-                "A házban nagy a kupi.", DialogLayout.Bottom)
-            game.showLongText(
                 "Told el a tárgyakat, hogy ki tudd tolni a baltát a ládához!", DialogLayout.Bottom)
             tiles.setCurrentTilemap(tilemap`level_2`)
             info.setLife(1)
             info.showLife(false)
             info.showCountdown(true)
-            info.startCountdown(Math.round(50 * difficultyFactor[selectedDifficulty]))
+            info.startCountdown(Math.round(40 * difficultyFactor[selectedDifficulty]))
             info.showScore(false)
             if (!resetedLevel) {goalCountOfTreasure += 0}
             heroFire = false
@@ -174,7 +171,7 @@ namespace m_levels {
             info.showLife(false)
             info.setLife(1)
             info.showCountdown(true)
-            info.startCountdown(Math.round(50 * difficultyFactor[selectedDifficulty]))
+            info.startCountdown(Math.round(70 * difficultyFactor[selectedDifficulty]))
             info.showScore(true)
             if (!resetedLevel) {goalCountOfTreasure += 6}
             heroFire = false
@@ -189,12 +186,27 @@ namespace m_levels {
             info.showLife(false)
             info.setLife(2)
             info.showCountdown(true)
-            info.startCountdown(Math.round(50 * difficultyFactor[selectedDifficulty]))
+            info.startCountdown(Math.round(90 * difficultyFactor[selectedDifficulty]))
             info.showScore(true)
             if (!resetedLevel) {goalCountOfTreasure += 5}
             heroFire = false
             gameMode = GameMode.platform
             xHero = 104; yHero = 40; gHero = true
+            InitialLevel(xHero, yHero, gHero)
+        } else if (num == 6) {
+            scene.setBackgroundColor(11)
+            game.showLongText(
+                "Hozd ki az ásót a ládához!", DialogLayout.Bottom)
+            tiles.setCurrentTilemap(tilemap`level_2`)
+            info.setLife(1)
+            info.showLife(false)
+            info.showCountdown(true)
+            info.startCountdown(Math.round(40 * difficultyFactor[selectedDifficulty]))
+            info.showScore(false)
+            if (!resetedLevel) { goalCountOfTreasure += 0 }
+            heroFire = false
+            gameMode = GameMode.soko
+            xHero = 136; yHero = 120; gHero = false
             InitialLevel(xHero, yHero, gHero)
         } else {
             info.changeScoreBy(TimeBonus)
@@ -257,16 +269,18 @@ namespace m_levels {
             //Véletlen layouts kiválasztása és a SokoSprite-k felhelyezése
             let spritek: Sprite[] = []
             let rnd = randint(0, layouts.length - 1)
-            console.log ("Véletlen pálya:" + rnd)
             let selectedLayout = layouts[rnd]
             
             // Balta kihelyezése az első koordinátára
-            axe = sprites.create(assets.image`AxeAnim`, SpriteKind.SokoSprite)
-            animation.runImageAnimation(axe, assets.animation`AxeAnim`, 200, true)
+            if (currentLevel==2) {
+                targetSoko = sprites.create(assets.image`AxeAnim`, SpriteKind.SokoSprite)
+            }
+            if (currentLevel==6) {
+                targetSoko = sprites.create(assets.image`SpadeAnim`, SpriteKind.SokoSprite)
+            }
             let x = selectedLayout[0][0]
             let y = selectedLayout[0][1]
-            axe.setPosition(x * 16 + 8, y * 16 + 8)
-            console.log("Axe: " + x + "," + y)
+            targetSoko.setPosition(x * 16 + 8, y * 16 + 8)
 
             // Többi sprite kihelyezése
             for (let i = 1; i < selectedLayout.length; i++) {
@@ -275,7 +289,6 @@ namespace m_levels {
                 let ujSprite = sprites.create(spriteSet[i], SpriteKind.SokoSprite)
                 ujSprite.setPosition(x * 16 + 8, y * 16 + 8)
                 spritek.push(ujSprite)
-                console.log("SokoSprite(" + i + "): " + x + "," + y)
             }
         }
     }
@@ -302,7 +315,7 @@ namespace m_levels {
         CloseLevel()
     })
     export function SokoWin() {
-        if (tiles.tileAtLocationEquals(axe.tilemapLocation(), assets.tile`TreasureOP`)) {
+        if (tiles.tileAtLocationEquals(targetSoko.tilemapLocation(), assets.tile`TreasureOP`)) {
             CloseLevel()
         }
     }
@@ -312,8 +325,7 @@ namespace m_levels {
         // Az eltelt idő kiszámítása (másodperc alapú finomítással)
         remainingSeconds = info.countdown()
         levelBonus = Math.round(remainingSeconds*0.25)
-        game.showLongText("Teljesítetted a " + currentLevel + ". szintet.", DialogLayout.Top)
-        game.showLongText("" + remainingSeconds + " másodperc maradtt", DialogLayout.Center)
+        game.showLongText("Hurrá! Még " + remainingSeconds + " másodperc maradt", DialogLayout.Center)
         game.showLongText("Kaptál" + levelBonus + " időbónuszt", DialogLayout.Bottom)
         resetedLevel = false
         TimeBonus += levelBonus
@@ -323,11 +335,11 @@ namespace m_levels {
 
     // TIMEOUT KEZELÉSE
     info.onCountdownEnd(function () {
-        let text = "Lejárt az idő! Újra játszod a pályát?"
+        let text = "Lejárt az idő! Újra?"
         Retry(text)
     })
     info.onLifeZero(function () {
-        let text = "Elfogyott az életed! Újra játszod a pályát?"
+        let text = "Elfogyott az életed! Újra?"
         Retry(text)
     })
     function Retry(text: string){
