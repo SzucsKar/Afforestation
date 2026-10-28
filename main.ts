@@ -1,8 +1,10 @@
 
+
 namespace SpriteKind {
     export const Finish = SpriteKind.create();
     export const Woodcutter = SpriteKind.create();
     export const SokoSprite = SpriteKind.create();
+    export const Boss = SpriteKind.create();
 }
 
 // a Hero helyzete a tile(létra)-n belül
@@ -12,7 +14,7 @@ let ladderRight2 = false
 let ladderCol2 = 0
 
 // Hero mozgásához
-enum tool { None, Tree, Axe, Spade, Pearl, Projectile }
+enum tool { None, Tree, Axe, Spade, Projectile }
 let inHand = tool.None
 let JumpingNow = false
 enum direction { Right, Left, Up, Down }
@@ -41,6 +43,7 @@ let remainingSeconds = 0
 let currentLevel = 1
 let projectile = null
 let heroFire = false
+let bossLife = 0
 
 
 // Általános beállítások változói
@@ -49,6 +52,11 @@ let selectedDifficulty = 0
 let difficultyFactor = [1.2,1.0]
 enum GameMode { soko, platform }
 let gameMode = GameMode.platform
+
+// Projectile random helyei a 7. pályához
+let projectileSpots = [
+    [12,1], [2,2], [8,3], [4,5], [10,6], [6,7], [14,9]
+]
 
 // SokoSprite céltárgyai
 let targetSoko: Sprite = null
@@ -208,6 +216,23 @@ namespace m_levels {
             gameMode = GameMode.soko
             xHero = 136; yHero = 120; gHero = false
             InitialLevel(xHero, yHero, gHero)
+        } else if (num == 7) {
+            scene.setBackgroundColor(15)
+            game.showLongText(
+                "Győzd le a földalatti kártevőt!", DialogLayout.Bottom)
+            tiles.setCurrentTilemap(tilemap`level_5`)
+            info.setLife(5)
+            info.showLife(true)
+            info.showCountdown(false)
+            info.showScore(true)
+            bossLife = 6
+            if (!resetedLevel) { goalCountOfTreasure += 1 }
+            heroFire = true
+            inHand = tool.Projectile
+            gameMode = GameMode.platform
+            Hero.setImage(assets.image`MarioWprojectile`)
+            xHero = 8; yHero = 8; gHero = true
+            InitialLevel(xHero, yHero, gHero)
         } else {
             info.changeScoreBy(TimeBonus)
             game.setGameOverEffect(true, effects.confetti)
@@ -217,6 +242,7 @@ namespace m_levels {
     // SZINT INDÍTÁSA
     function InitialLevel(xStartPos: number, yStartPos: number, gravity: boolean) {
         // Töröljük a megmaradt enemy-t
+        sprites.destroyAllSpritesOfKind(SpriteKind.Boss)
         sprites.destroyAllSpritesOfKind(SpriteKind.Enemy)
         sprites.destroyAllSpritesOfKind(SpriteKind.Woodcutter)
         sprites.destroyAllSpritesOfKind(SpriteKind.SokoSprite)
@@ -248,10 +274,9 @@ namespace m_levels {
         let Bug = null
         if (gameMode == GameMode.platform){
             for (let value of tiles.getTilesByType(assets.tile`BackGrStoneBugStart`)) {
-                Bug = sprites.create(assets.image`Bug`, SpriteKind.Enemy)
+                Bug = sprites.create(assets.image`Bug`, SpriteKind.Boss)
                 tiles.placeOnTile(Bug, value)
-                Bug.vx = 15
-                Bug.ay = 300
+                Bug.vy = -15
             }
             for (let value of tiles.getTilesByType(assets.tile`BackGrkyFlierStart`)) {
                 Bug = sprites.create(assets.image`Flier`, SpriteKind.Enemy)
@@ -321,12 +346,12 @@ namespace m_levels {
     }
 
     // SZINT ZÁRÁSRA
-    function CloseLevel() {
+    export function CloseLevel() {
         // Az eltelt idő kiszámítása (másodperc alapú finomítással)
         remainingSeconds = info.countdown()
         levelBonus = Math.round(remainingSeconds*0.25)
         game.showLongText("Hurrá! Még " + remainingSeconds + " másodperc maradt", DialogLayout.Center)
-        game.showLongText("Kaptál" + levelBonus + " időbónuszt", DialogLayout.Bottom)
+        game.showLongText("Kaptál " + levelBonus + " időbónuszt", DialogLayout.Bottom)
         resetedLevel = false
         TimeBonus += levelBonus
         currentLevel += 1
@@ -348,8 +373,8 @@ namespace m_levels {
             resetedLevel = true
             m_levels.NextLevel(currentLevel)
         } else {
-            game.setGameOverEffect(true, effects.blizzard)
-            game.gameOver(true)
+            game.setGameOverEffect(false, effects.blizzard)
+            game.gameOver(false)
         }
     }
 }
@@ -455,22 +480,24 @@ namespace m_hero {
                 Hero.setImage(assets.image`MarioWtree`)
                 tiles.setTileAt(Hero.tilemapLocation(), assets.tile`transparency16`)
                 inHand = tool.Tree
-            } else if (inHand === tool.None && Hero.tileKindAt(TileDirection.Center, assets.tile`TreeDW`)) {
-                Hero.setImage(assets.image`MarioWtree`)
-                tiles.setTileAt(Hero.tilemapLocation(), assets.tile`BackGrStone`)
-                inHand = tool.Tree
-            } else if (inHand === tool.None && Hero.tileKindAt(TileDirection.Center, assets.tile`TreeDWW`)) {
-                Hero.setImage(assets.image`MarioWpearl`)
-                tiles.setTileAt(Hero.tilemapLocation(), assets.tile`BackGrStone`)
-                inHand = tool.Pearl
-            } else if (inHand === tool.None && heroFire) {
+            } else if (inHand === tool.None && Hero.tileKindAt(TileDirection.Center, assets.image`projectile1`)) {
+                Hero.setImage(assets.image`MarioWprojectile`)
+                tiles.setTileAt(Hero.tilemapLocation(), assets.tile`transparency16`)
+                inHand = tool.Projectile
+            } else if (inHand === tool.Projectile && heroFire) {
                 projectile = sprites.createProjectileFromSprite(assets.image`projectile1`, Hero, 0, 0)
                 projectile.lifespan = 200
                 if (lastVelocity == direction.Right) {
-                    projectile.vx = 150
+                    projectile.vx = 400
                 } else {
-                    projectile.vx = -150
+                    projectile.vx = -400
                 }
+                inHand = tool.None
+                Hero.setImage(assets.image`Mario`)
+                let rnd = randint(0, projectileSpots.length - 1)
+                let x = projectileSpots[rnd][0]
+                let y = projectileSpots[rnd][1]
+                tiles.setTileAt(tiles.getTileLocation(x, y),assets.image`projectile1`)
             }
         }
         if (gameMode == GameMode.soko) {
@@ -540,11 +567,29 @@ namespace m_enemies {
             sprite.vx = -15
         }
     })
-
+    scene.onHitWall(SpriteKind.Enemy, function (sprite, location) {
+        if (sprite.isHittingTile(CollisionDirection.Left)) {
+            sprite.vx = 20
+        }
+        if (sprite.isHittingTile(CollisionDirection.Right)) {
+            sprite.vx = -20
+        }
+    })
+    scene.onHitWall(SpriteKind.Boss, function (sprite, location) {
+        if (sprite.isHittingTile(CollisionDirection.Top)) {
+            sprite.vy = 20
+        }
+        if (sprite.isHittingTile(CollisionDirection.Bottom)) {
+            sprite.vy = -20
+        }
+    })
 }
 
 namespace events {
     scene.onOverlapTile(SpriteKind.Player, assets.tile`Firefield0`, function (sprite, location) {
+        m_hero.Damage(effects.fire, true, location);
+    })
+    scene.onOverlapTile(SpriteKind.Player, assets.tile`Firefield`, function (sprite, location) {
         m_hero.Damage(effects.fire, true, location);
     })
     scene.onOverlapTile(SpriteKind.Player, assets.tile`WaterField`, function (sprite, location) {
@@ -554,10 +599,16 @@ namespace events {
         m_hero.Damage(effects.none, false);
         sprites.destroy(otherSprite, effects.disintegrate, 150);
     })
-    sprites.onOverlap(SpriteKind.Enemy, SpriteKind.Projectile, function (sprite, otherSprite) {
-        sprites.destroy(sprite);
-        sprites.destroy(otherSprite, effects.disintegrate, 150);
-        music.play(music.melodyPlayable(music.baDing), music.PlaybackMode.InBackground)
+    sprites.onOverlap(SpriteKind.Boss, SpriteKind.Projectile, function (sprite, otherSprite) {
+        bossLife -= 1
+        sprite.sayText("Life: " + bossLife)
+        if (bossLife == 0){
+            sprites.destroy(sprite);
+            sprites.destroy(otherSprite, effects.disintegrate, 150);
+            music.play(music.melodyPlayable(music.baDing), music.PlaybackMode.InBackground)
+            info.changeScoreBy(1)
+            m_levels.CloseLevel()
+        }
     })
     scene.onOverlapTile(SpriteKind.Woodcutter, assets.tile`TreeUPW`, function (sprite, location) {
         let directionX = sprite.vx;
@@ -570,7 +621,6 @@ namespace events {
             sprite.vx = directionX;
             tree.destroy();
         })
-        
         tiles.setTileAt(location, assets.tile`TreeUPW0`);
     })
 }

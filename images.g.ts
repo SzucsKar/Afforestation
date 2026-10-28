@@ -41,25 +41,6 @@ namespace myImages {
 . . e e . f f f f f f . . . . . 
 . . . . . f f . . f f . . . . . 
 `;
-            case "image3":
-            case "MarioWpearl":return img`
-. . . . . . . . . . . . . . . . 
-. . . . . . f f f f . . . . . . 
-. . . . f f f 2 2 f f f . . . . 
-. . . f f f 2 2 2 2 f f f . . . 
-. . f f f e e e e e e f f f . . 
-. . f f e 2 2 2 2 2 2 e e f . . 
-. f f e 2 f f f f f f 2 e f f . 
-. f f f f f e e e e f f f f f . 
-. . f e f b f 4 4 f b f e f . . 
-. . f e 4 1 f d d 6 6 9 6 6 . . 
-. . . f e 4 d d 6 6 8 6 9 8 6 . 
-. . f e f 2 2 2 6 9 6 6 9 6 9 . 
-. . e 4 f 2 2 2 6 6 9 6 6 8 6 . 
-. . . . f 4 4 5 9 6 6 6 6 9 9 . 
-. . . . f f f f 6 8 9 6 6 6 8 . 
-. . . . f f f . . 6 6 9 8 9 . . 
-`;
             case "image4":
             case "projectile1":return img`
 . . . . . . . . . . . . . . . . 
@@ -352,6 +333,25 @@ c c c c c c c c c c c c c c c c
 . . 6 9 6 6 6 6 6 . . . . . . . 
 . . 6 6 6 6 6 6 . . . . . . . . 
 . . . 6 6 6 . . . . . . . . . . 
+`;
+            case "image3":
+            case "MarioWprojectile":return img`
+. . . . . . . . . . . . . . . . 
+. . . . . . f f f f . . . . . . 
+. . . . f f f 2 2 f f f . . . . 
+. . . f f f 2 2 2 2 f f f . . . 
+. . f f f e e e e e e f f f . . 
+. . f f e 2 2 2 2 2 2 e e f . . 
+. f f e 2 f f f f f f 2 e f f . 
+. f f f f f e e e e f f f f f . 
+. . f e f b f 4 4 f b f e f . . 
+. . f e 4 1 f d d 4 4 5 4 4 . . 
+. . . f e 4 d d 4 4 2 4 5 2 4 . 
+. . f e f 2 2 2 4 5 4 4 5 4 5 . 
+. . e 4 f 2 2 2 4 4 5 4 4 2 4 . 
+. . . . f 4 4 5 5 4 4 4 4 5 5 . 
+. . . . f f f f 4 2 5 4 4 4 2 . 
+. . . . f f f . . 4 4 5 2 5 . . 
 `;
         }
         return null;

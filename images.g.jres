@@ -9,11 +9,6 @@
         "mimeType": "image/x-mkcd-f4",
         "displayName": "MarioWtree"
     },
-    "image3": {
-        "data": "hwQQABAAAAAAAAAAAAAAAAAAAP8AAAAAAAD////wDgAA8P/+7u8EAAD/7/JP/v//AP8u/xskQv/wLy7v/y1C//AiLu/ULVIP8CIu79RmlgbwLy7vb5ZmaAD/Lv9raGlpAP/v8p9mZpYA8O/+bplmhgAA//9vaJiWAAAA/wCWlggAAAAAAAAAAA==",
-        "mimeType": "image/x-mkcd-f4",
-        "displayName": "MarioWpearl"
-    },
     "image4": {
         "data": "hwQQABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAIAAAAAAAAAJAIABAAAAABAJUIEAAAAANBVRQAAAAAAVFUEAAAAAEBVVQIAAAAARERUJAAAAAAAAEBEAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
         "mimeType": "image/x-mkcd-f4",
@@ -88,6 +83,11 @@
         "data": "hwQQABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABgZgYAAAAAZmaZZgAAAABgaWZmAAAAAABmZmYAAAAA4G5mBgAAAOTuYGYGAE7uDgBgZgDg7gAAAAAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
         "mimeType": "image/x-mkcd-f4",
         "displayName": "SpadeAnim"
+    },
+    "image3": {
+        "data": "hwQQABAAAAAAAAAAAAAAAAAAAP8AAAAAAAD////wDgAA8P/+7u8EAAD/7/JP/v//AP8u/xskQv/wLy7v/y1C//AiLu/ULVIP8CIu79REVATwLy7vT1REQgD/Lv9LQkVFAP/v8l9ERFQA8O/+TlVEJAAA//9PQlJUAAAA/wBUVAIAAAAAAAAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "MarioWprojectile"
     },
     "anim2": {
         "namespace": "myAnimations",
