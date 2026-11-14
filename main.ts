@@ -1,5 +1,3 @@
-
-
 namespace SpriteKind {
     export const Finish = SpriteKind.create();
     export const Woodcutter = SpriteKind.create();
@@ -14,12 +12,13 @@ let ladderRight2 = false
 let ladderCol2 = 0
 
 // Hero mozgásához
-enum tool { None, Tree, Axe, Spade, Projectile }
+enum tool { None, Tree, DryTree, Spade, Projectile }
 let inHand = tool.None
 let JumpingNow = false
-enum direction { Right, Left, Up, Down }
-let lastVelocity = direction.Right
-
+    //enum direction { Right, Left, Up, Down }
+    //let lastVelocity = direction.Right
+    //forever(function () {if (Hero.vx > 0) {lastVelocity = direction.Right} } )
+    
 // SOKO mozgásához
 enum SokoTileState {Clear, Wall, SokoSprite}
 
@@ -27,7 +26,7 @@ enum SokoTileState {Clear, Wall, SokoSprite}
 let sokoRowHero = 0
 let sokoColHero = 0
 
-// Hero pályaszint kezdő helyzete
+// Hero pályaszint kezdő helyzete és gravitációs kapcsoló
 let xHero = 0
 let yHero = 0
 let gHero = false
@@ -37,13 +36,14 @@ let gHero = false
 let resetedLevel = false
 let goalCountOfTreasure = 0
 let levelScore = 0
-let TimeBonus = 0
-let levelBonus
+let timeBonus = 0
+let levelBonus = 0
 let remainingSeconds = 0
 let currentLevel = 1
-let projectile = null
+let dryTreeStock = 0
 let heroFire = false
 let bossLife = 0
+let projectile = null
 
 
 // Általános beállítások változói
@@ -55,7 +55,7 @@ let gameMode = GameMode.platform
 
 // Projectile random helyei a 7. pályához
 let projectileSpots = [
-    [12,1], [2,2], [8,3], [4,5], [10,6], [6,7], [14,9]
+    [12,1], [2,2], [8,3], [4,5], [10,6], [6,9], [14,9], [11,11]
 ]
 
 // SokoSprite céltárgyai
@@ -69,41 +69,15 @@ let layouts =[
 ]
 // SokoSprite random képei a 2. pályához
 let spriteSet: Image [] = [
-    assets.image`s_bicycle`,
-    assets.image`s_table`,
-    assets.image`s_cabinet`,
-    assets.image`s_chair`,
-    assets.image`s_flower`,
-    assets.image`s_water`,
-    assets.image`s_bed`,
-    assets.image`s_bicycle`,
-    assets.image`s_table`,
-    assets.image`s_cabinet`,
-    assets.image`s_chair`,
-    assets.image`s_flower`,
-    assets.image`s_water`,
-    assets.image`s_bed`,
-    assets.image`s_chair`,
-    assets.image`s_flower`,
-    assets.image`s_water`
+    assets.image`s_bicycle`, assets.image`s_table`, assets.image`s_cabinet`, assets.image`s_chair`, assets.image`s_flower`,
+    assets.image`s_water`, assets.image`s_bed`, assets.image`s_bicycle`, assets.image`s_table`, assets.image`s_cabinet`,
+    assets.image`s_chair`, assets.image`s_flower`, assets.image`s_water`, assets.image`s_bed`,
+    assets.image`s_chair`, assets.image`s_flower`, assets.image`s_water`
 ]
 
 // A Hero-t már itt létrehozzuk, hogy a háttérben futó események ne keressék hiába
 let Hero = sprites.create(assets.image`Mario`, SpriteKind.Player)
 Hero.setFlag(SpriteFlag.Invisible, true)
-
-// Mindig figyelt és futtatot elemek
-forever(function () {
-    if (Hero.vx > 0) {
-        lastVelocity = direction.Right;
-    } else if (Hero.vx < 0) {
-        lastVelocity = direction.Left;
-    } else if (Hero.vy < 0) {
-        lastVelocity = direction.Up;
-    } else if (Hero.vy > 0) {
-        lastVelocity = direction.Down
-    }
-})
 
 namespace intro{
     difficulty = game.ask("Könnyű játék?","(Hosszabb pályaidővel)")
@@ -233,8 +207,24 @@ namespace m_levels {
             Hero.setImage(assets.image`MarioWprojectile`)
             xHero = 8; yHero = 8; gHero = true
             InitialLevel(xHero, yHero, gHero)
+        } else if (num == 8) {
+            scene.setBackgroundColor(4)
+            game.showLongText(
+                "Öntözz és ültess!", DialogLayout.Bottom)
+            tiles.setCurrentTilemap(tilemap`level_6`)
+            info.setLife(5)
+            info.showLife(true)
+            info.showCountdown(false)
+            info.showScore(true)
+            if (!resetedLevel) { goalCountOfTreasure += 15 }
+            heroFire = false
+            inHand = tool.Spade
+            gameMode = GameMode.platform
+            Hero.setImage(assets.image`MarioWspade`)
+            xHero = 24; yHero = 232; gHero = false
+            InitialLevel(xHero, yHero, gHero)
         } else {
-            info.changeScoreBy(TimeBonus)
+            info.changeScoreBy(timeBonus)
             game.setGameOverEffect(true, effects.confetti)
             game.gameOver(true)
         }
@@ -256,9 +246,15 @@ namespace m_levels {
         scene.cameraFollowSprite(Hero)
         
         if (gameMode == GameMode.platform){
-            Hero.vy = 0
-            Hero.ay = 300
-            controller.moveSprite(Hero, 100, 0)
+            if(gravity){
+                Hero.vy = 0
+                Hero.ay = 300
+                controller.moveSprite(Hero, 100, 0)
+            } else {
+                Hero.vy = 0
+                Hero.ay = 0
+                controller.moveSprite(Hero, 100, 100)
+            }
         }
         if (gameMode == GameMode.soko){
             Hero.vx = 0
@@ -318,9 +314,9 @@ namespace m_levels {
         }
     }
 
-    // LÁDA LEZÁRÁSA
+    // LÁDÁBA PAKOLÁS ÉS LÁDA LEZÁRÁSA
     scene.onOverlapTile(SpriteKind.Player, assets.tile`TreasureOP`, function (sprite, location) {
-        if (inHand != tool.None) {
+        if (inHand === tool.Tree) {
             inHand = tool.None
             Hero.setImage(assets.image`Mario`)
             info.changeScoreBy(1)
@@ -337,7 +333,11 @@ namespace m_levels {
         CloseLevel()
     })
     scene.onOverlapTile(SpriteKind.Player, assets.tile`House`, function (sprite, location) {
-        CloseLevel()
+        if (info.score() == goalCountOfTreasure) {
+            CloseLevel()
+        } else {
+            Hero.sayText(goalCountOfTreasure - info.score() + " more points",10)
+        }
     })
     export function SokoWin() {
         if (tiles.tileAtLocationEquals(targetSoko.tilemapLocation(), assets.tile`TreasureOP`)) {
@@ -353,7 +353,7 @@ namespace m_levels {
         game.showLongText("Hurrá! Még " + remainingSeconds + " másodperc maradt", DialogLayout.Center)
         game.showLongText("Kaptál " + levelBonus + " időbónuszt", DialogLayout.Bottom)
         resetedLevel = false
-        TimeBonus += levelBonus
+        timeBonus += levelBonus
         currentLevel += 1
         NextLevel(currentLevel)
     }
@@ -380,7 +380,8 @@ namespace m_levels {
 }
 
 namespace m_hero {
-    
+
+    //SOKO pályán való mozgás
     function GetSokoAt(checkedCol: number, checkedRow:number): Sprite {
         for (let soko of sprites.allOfKind(SpriteKind.SokoSprite)) {
             let loc = soko.tilemapLocation()
@@ -434,8 +435,41 @@ namespace m_hero {
         }
     }
 
+    // Platform pályán: van víz a szomszédban
+    function ConnectedToWater(loc: tiles.Location): boolean {
+        if (tiles.tileAtLocationEquals(
+            tiles.getTileLocation(loc.column, loc.row - 1),
+            assets.tile`Water1`
+        )) return true
+        if (tiles.tileAtLocationEquals(
+            tiles.getTileLocation(loc.column, loc.row + 1),
+            assets.tile`Water1`
+        )) return true
+        if (tiles.tileAtLocationEquals(
+            tiles.getTileLocation(loc.column - 1, loc.row),
+            assets.tile`Water1`
+        )) return true
+        if (tiles.tileAtLocationEquals(
+            tiles.getTileLocation(loc.column + 1, loc.row),
+            assets.tile`Water1`
+        )) return true
+        return false
+    }
+
+    function TreeGrowing (loc: tiles.Location): void {
+        let tree = sprites.create(assets.image`TreeAnim`, SpriteKind.Food);
+        tiles.placeOnTile(tree, loc);
+        animation.runImageAnimation(tree, assets.animation`TreeAnimRew`, 300, false);
+        info.changeScoreBy(1)
+        control.runInParallel(function () {
+            pause(1500);
+            tree.destroy();
+            tiles.setTileAt(loc, assets.tile`TreeUPW`)
+            })
+    }
+
     controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
-        if (gameMode == GameMode.platform) {
+        if (gameMode == GameMode.platform && gHero == true) {
             HeroJump()
         }
         if (gameMode == GameMode.soko) {
@@ -466,15 +500,21 @@ namespace m_hero {
             SokoMovingLogic(-1, 0)
         }
     })
-
-
     controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-        if (gameMode == GameMode.platform) {
+        if (gameMode == GameMode.platform && gHero == true) {
             HeroJump()
+        } else if (inHand === tool.Spade && Hero.tileKindAt(TileDirection.Center, assets.tile`TreasureOP`)) {
+            inHand = tool.DryTree
+            Hero.setImage(assets.image`MarioWtree`)
+            if (dryTreeStock == 0) {dryTreeStock = 5}
+        } else if (inHand === tool.DryTree && Hero.tileKindAt(TileDirection.Center, assets.tile`TreasureOP`)) {
+            inHand = tool.Spade
+            Hero.setImage(assets.image`MarioWspade`)
         }
     })
     controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
         if(gameMode == GameMode.platform){
+
             // TÁRGYAK FELVÉTELE VAGY LÖVÉS
             if (inHand === tool.None && Hero.tileKindAt(TileDirection.Center, assets.tile`TreeUPW`)) {
                 Hero.setImage(assets.image`MarioWtree`)
@@ -484,16 +524,34 @@ namespace m_hero {
                 Hero.setImage(assets.image`MarioWprojectile`)
                 tiles.setTileAt(Hero.tilemapLocation(), assets.tile`transparency16`)
                 inHand = tool.Projectile
+            } else if (inHand === tool.Spade && Hero.tileKindAt(TileDirection.Center, assets.tile`transparency16`)) {
+                let loc = Hero.tilemapLocation()
+                if (ConnectedToWater(loc)) {
+                    tiles.setTileAt(loc, assets.tile`Water1`)
+                    tiles.setWallAt(loc, true)
+                    if (tiles.tileAtLocationEquals(tiles.getTileLocation(loc.column, loc.row - 1), assets.tile`TreeUPW0`)) {
+                        TreeGrowing(tiles.getTileLocation(loc.column, loc.row - 1))
+                    }
+                }
+            } else if (inHand === tool.DryTree && Hero.tileKindAt(TileDirection.Center, assets.tile`WalkingGrass`)) {
+                    let loc = Hero.tilemapLocation()
+                    tiles.setTileAt(loc, assets.tile`TreeUPW0`)
+                    dryTreeStock -= 1
+                    Hero.sayText(dryTreeStock + " left",200)
+                    if (dryTreeStock == 0) {
+                        Hero.setImage(assets.image`MarioWspade`)
+                        inHand = tool.Spade
+                    }
+                    if (tiles.tileAtLocationEquals(tiles.getTileLocation(loc.column, loc.row + 1), assets.tile`Water1`)) {
+                        TreeGrowing(tiles.getTileLocation(loc.column, loc.row))
+                    }
             } else if (inHand === tool.Projectile && heroFire) {
                 projectile = sprites.createProjectileFromSprite(assets.image`projectile1`, Hero, 0, 0)
                 projectile.lifespan = 200
-                if (lastVelocity == direction.Right) {
-                    projectile.vx = 400
-                } else {
-                    projectile.vx = -400
-                }
+                projectile.vx = -400
                 inHand = tool.None
                 Hero.setImage(assets.image`Mario`)
+                // Lövés után random lőszer kihelyezése
                 let rnd = randint(0, projectileSpots.length - 1)
                 let x = projectileSpots[rnd][0]
                 let y = projectileSpots[rnd][1]
