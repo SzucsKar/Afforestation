@@ -36,6 +36,7 @@ let gHero = false
 let resetedLevel = false
 let goalCountOfTreasure = 0
 let levelScore = 0
+let levelTime = 0
 let timeBonus = 0
 let levelBonus = 0
 let remainingSeconds = 0
@@ -44,6 +45,7 @@ let dryTreeStock = 0
 let heroFire = false
 let bossLife = 0
 let projectile = null
+
 
 
 // Általános beállítások változói
@@ -89,7 +91,7 @@ namespace intro{
         "Egyik este furcsa rovarok jelentek meg az erdőben.", DialogLayout.Bottom)
     scene.setBackgroundColor(12)
     game.showLongText(
-        "A rovarok a fákat pusztítják. Mindent megesznek, ami az útjukba kerül", DialogLayout.Bottom)
+        "A fákat pusztítják. Mindent megesznek, ami az útjukba kerül.", DialogLayout.Bottom)
     m_levels.NextLevel(1)
 }
 
@@ -103,8 +105,8 @@ namespace m_levels {
             tiles.setCurrentTilemap(tilemap`level_1`)
             info.showLife(false)
             info.setLife(1)
-            info.showCountdown(true)
-            info.startCountdown(Math.round(50 * difficultyFactor[selectedDifficulty]))
+            levelTime = 50
+            info.showCountdown(true)        
             info.showScore(false)
             if(!resetedLevel){goalCountOfTreasure += 0}
             heroFire = false
@@ -118,8 +120,8 @@ namespace m_levels {
             tiles.setCurrentTilemap(tilemap`level_2`)
             info.setLife(1)
             info.showLife(false)
+            levelTime = 40
             info.showCountdown(true)
-            info.startCountdown(Math.round(40 * difficultyFactor[selectedDifficulty]))
             info.showScore(false)
             if (!resetedLevel) {goalCountOfTreasure += 0}
             heroFire = false
@@ -134,11 +136,11 @@ namespace m_levels {
             game.showLongText(
                 "Igyekezz, mert a rovarok megeszik!", DialogLayout.Bottom)
             game.showLongText(
-                "Szerezz meg 4 csemetét!", DialogLayout.Bottom)
+                "Most 4 csemetét gyűjts!", DialogLayout.Bottom)
             info.showLife(false)
             info.setLife(1)
+            levelTime = 50
             info.showCountdown(true)
-            info.startCountdown(Math.round(50 * difficultyFactor[selectedDifficulty]))
             info.showScore(true)
             if (!resetedLevel) {goalCountOfTreasure += 4}
             heroFire = false
@@ -149,11 +151,11 @@ namespace m_levels {
             scene.setBackgroundColor(9)
             tiles.setCurrentTilemap(tilemap`level_32`)
             game.showLongText(
-                "Több kell! Érd el a 10 darabot!", DialogLayout.Bottom)
+                "További 6 csemetét szedhetsz össze!", DialogLayout.Bottom)
             info.showLife(false)
             info.setLife(1)
+            levelTime = 70
             info.showCountdown(true)
-            info.startCountdown(Math.round(70 * difficultyFactor[selectedDifficulty]))
             info.showScore(true)
             if (!resetedLevel) {goalCountOfTreasure += 6}
             heroFire = false
@@ -164,11 +166,11 @@ namespace m_levels {
             scene.setBackgroundColor(9)
             tiles.setCurrentTilemap(tilemap`level_33`)
             game.showLongText(
-                "Utolsó esély, hogy meglegyen a 15 csemete!", DialogLayout.Bottom)
+                "Utolsó kör és 5 fácska kell még!", DialogLayout.Bottom)
             info.showLife(false)
             info.setLife(2)
+            levelTime = 90
             info.showCountdown(true)
-            info.startCountdown(Math.round(90 * difficultyFactor[selectedDifficulty]))
             info.showScore(true)
             if (!resetedLevel) {goalCountOfTreasure += 5}
             heroFire = false
@@ -183,7 +185,7 @@ namespace m_levels {
             info.setLife(1)
             info.showLife(false)
             info.showCountdown(true)
-            info.startCountdown(Math.round(40 * difficultyFactor[selectedDifficulty]))
+            levelTime = 40
             info.showScore(false)
             if (!resetedLevel) { goalCountOfTreasure += 0 }
             heroFire = false
@@ -193,11 +195,12 @@ namespace m_levels {
         } else if (num == 7) {
             scene.setBackgroundColor(15)
             game.showLongText(
-                "Győzd le a földalatti kártevőt!", DialogLayout.Bottom)
+                "Győzd le a kártevőt!", DialogLayout.Bottom)
             tiles.setCurrentTilemap(tilemap`level_5`)
             info.setLife(5)
             info.showLife(true)
             info.showCountdown(false)
+            levelTime = 0
             info.showScore(true)
             bossLife = 6
             if (!resetedLevel) { goalCountOfTreasure += 1 }
@@ -215,6 +218,7 @@ namespace m_levels {
             info.setLife(5)
             info.showLife(true)
             info.showCountdown(false)
+            levelTime = 0
             info.showScore(true)
             if (!resetedLevel) { goalCountOfTreasure += 15 }
             heroFire = false
@@ -239,6 +243,19 @@ namespace m_levels {
 
         // Szintenként gyűjtött pontszámláló visszaállítása
         levelScore = 0
+
+        // Kamera pásztázás
+        let Cam = sprites.create(img`.`, SpriteKind.Food)
+        scene.cameraFollowSprite(Cam)
+        Cam.setPosition(80, 60)
+        Cam.vx = 40; pause(4000)
+        Cam.vx = -40; Cam.vy = 60; pause(4000)
+        Cam.destroy()
+
+        // Visszaszámlálás indítása
+        if (levelTime != 0) {
+            info.startCountdown(Math.round(levelTime * difficultyFactor[selectedDifficulty]))
+        }
 
         // Megjelenítjük a Hero-t és beállítjuk a mozgását
         Hero.setFlag(SpriteFlag.Invisible, false)
@@ -347,13 +364,21 @@ namespace m_levels {
 
     // SZINT ZÁRÁSRA
     export function CloseLevel() {
-        // Az eltelt idő kiszámítása (másodperc alapú finomítással)
-        remainingSeconds = info.countdown()
-        levelBonus = Math.round(remainingSeconds*0.25)
-        game.showLongText("Hurrá! Még " + remainingSeconds + " másodperc maradt", DialogLayout.Center)
-        game.showLongText("Kaptál " + levelBonus + " időbónuszt", DialogLayout.Bottom)
+        game.showLongText("Teljesítetted a " + currentLevel + ". szintet!", DialogLayout.Top)
+        sprites.destroyAllSpritesOfKind(SpriteKind.Boss)
+        sprites.destroyAllSpritesOfKind(SpriteKind.Enemy)
+        sprites.destroyAllSpritesOfKind(SpriteKind.Woodcutter)
+        sprites.destroyAllSpritesOfKind(SpriteKind.SokoSprite)
+        
+        if (levelTime != 0) {
+            // Az eltelt idő kiszámítása (másodperc alapú finomítással)
+            remainingSeconds = info.countdown()
+            levelBonus = Math.round(remainingSeconds*0.25)
+            game.showLongText("Hurrá! Még " + remainingSeconds + " másodperc maradt", DialogLayout.Center)
+            game.showLongText("Kaptál " + levelBonus + " időbónuszt", DialogLayout.Bottom)
+            timeBonus += levelBonus
+        }
         resetedLevel = false
-        timeBonus += levelBonus
         currentLevel += 1
         NextLevel(currentLevel)
     }
@@ -461,6 +486,7 @@ namespace m_hero {
         tiles.placeOnTile(tree, loc);
         animation.runImageAnimation(tree, assets.animation`TreeAnimRew`, 300, false);
         info.changeScoreBy(1)
+        levelScore += 1
         control.runInParallel(function () {
             pause(1500);
             tree.destroy();
