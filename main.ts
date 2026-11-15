@@ -244,14 +244,6 @@ namespace m_levels {
         // Szintenként gyűjtött pontszámláló visszaállítása
         levelScore = 0
 
-        // Kamera pásztázás
-        let Cam = sprites.create(img`.`, SpriteKind.Food)
-        scene.cameraFollowSprite(Cam)
-        Cam.setPosition(80, 60)
-        Cam.vx = 40; pause(4000)
-        Cam.vx = -40; Cam.vy = 60; pause(4000)
-        Cam.destroy()
-
         // Visszaszámlálás indítása
         if (levelTime != 0) {
             info.startCountdown(Math.round(levelTime * difficultyFactor[selectedDifficulty]))
