@@ -92,7 +92,7 @@ namespace intro{
     scene.setBackgroundColor(12)
     game.showLongText(
         "A fákat pusztítják. Mindent megesznek, ami az útjukba kerül.", DialogLayout.Bottom)
-    m_levels.NextLevel(4)
+    m_levels.NextLevel(1)
 }
 
 namespace m_levels {
