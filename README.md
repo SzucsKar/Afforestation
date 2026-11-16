@@ -1,23 +1,23 @@
-> Open this page at [https://szucskar.github.io/afforestation/](https://szucskar.github.io/afforestation/)
+## Afforestation
+Strange insects have invaded the forest and are destroying every tree in their path.
+Collect seedlings, recover the lost tools, defeat the nest guardian and restore life to the forest.
 
-## Use as Extension
+## Controls
+D-Pad / Arrow Keys: Move  
+A: Jump / Tool action  
+B: Pick up item / Use item / Shoot
 
-This repository can be added as an **extension** in MakeCode.
-
-* open [https://arcade.makecode.com/](https://arcade.makecode.com/)
-* click on **New Project**
-* click on **Extensions** under the gearwheel menu
-* search for **https://github.com/szucskar/afforestation** and import
-
-## Edit this project
-
-To edit this repository in MakeCode.
-
-* open [https://arcade.makecode.com/](https://arcade.makecode.com/)
-* click on **Import** then click on **Import URL**
-* paste **https://github.com/szucskar/afforestation** and click import
-
-#### Metadata (used for search, rendering)
-
-* for PXT/arcade
-<script src="https://makecode.com/gh-pages-embed.js"></script><script>makeCodeRender("{{ site.makecode.home_url }}", "{{ site.github.owner_name }}/{{ site.github.repository_name }}");</script>
+## Levels
+Reach the house  
+Recover the axe  
+Collect seedlings  
+Collect more seedlings  
+Final seedling hunt  
+Recover the spade  
+Defeat the pest leader  
+Reforest the land  
+## Tips
+Time remaining gives bonus points.  
+Some puzzles require planning ahead.  
+Mistakes can make a level harder, but every attempt teaches something.  
+Good luck restoring the forest!
