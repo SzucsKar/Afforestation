@@ -15,7 +15,8 @@ Collect more seedlings
 Final seedling hunt  
 Recover the spade  
 Defeat the pest leader  
-Reforest the land  
+Reforest the land
+
 ## Tips
 Time remaining gives bonus points.  
 Some puzzles require planning ahead.  

@@ -92,7 +92,7 @@ namespace intro{
     scene.setBackgroundColor(12)
     game.showLongText(
         "A fákat pusztítják. Mindent megesznek, ami az útjukba kerül.", DialogLayout.Bottom)
-    m_levels.NextLevel(1)
+    m_levels.NextLevel(4)
 }
 
 namespace m_levels {
@@ -328,6 +328,7 @@ namespace m_levels {
         if (inHand === tool.Tree) {
             inHand = tool.None
             Hero.setImage(assets.image`Mario`)
+            music.play(music.melodyPlayable(music.baDing), music.PlaybackMode.InBackground)
             info.changeScoreBy(1)
             levelScore += 1
             if (info.score() == goalCountOfTreasure) {
@@ -477,6 +478,7 @@ namespace m_hero {
         let tree = sprites.create(assets.image`TreeAnim`, SpriteKind.Food);
         tiles.placeOnTile(tree, loc);
         animation.runImageAnimation(tree, assets.animation`TreeAnimRew`, 300, false);
+        music.play(music.melodyPlayable(music.beamUp), music.PlaybackMode.InBackground);
         info.changeScoreBy(1)
         levelScore += 1
         control.runInParallel(function () {
@@ -604,7 +606,7 @@ namespace m_hero {
             Hero.vy = -100;
             Hero.startEffect(effect, 500);
             info.changeLifeBy(-1);
-            music.play(music.melodyPlayable(music.powerDown), music.PlaybackMode.InBackground);
+            music.play(music.melodyPlayable(music.smallCrash), music.PlaybackMode.InBackground);
         }
     }
     function HeroJump(): void {
@@ -678,10 +680,10 @@ namespace events {
     sprites.onOverlap(SpriteKind.Boss, SpriteKind.Projectile, function (sprite, otherSprite) {
         bossLife -= 1
         sprite.sayText("Life: " + bossLife)
+        music.play(music.melodyPlayable(music.baDing), music.PlaybackMode.InBackground)
         if (bossLife == 0){
             sprites.destroy(sprite);
             sprites.destroy(otherSprite, effects.disintegrate, 150);
-            music.play(music.melodyPlayable(music.baDing), music.PlaybackMode.InBackground)
             info.changeScoreBy(1)
             m_levels.CloseLevel()
         }
