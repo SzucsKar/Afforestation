@@ -4,8 +4,8 @@ Collect seedlings, recover the lost tools, defeat the nest guardian and restore 
 
 ## Controls
 D-Pad / Arrow Keys: Move  
-A: Jump / Tool action  
-B: Pick up item / Use item / Shoot
+A: Jump / Pick up tree / Shoot / Dig,Plant
+B: Switsh tool
 
 ## Levels
 Reach the house  
