@@ -367,7 +367,7 @@ namespace m_levels {
         if (levelTime != 0) {
             // Az eltelt idő kiszámítása (másodperc alapú finomítással)
             remainingSeconds = info.countdown()
-            levelBonus = Math.round(remainingSeconds*0.25)
+            levelBonus = Math.round(remainingSeconds / difficultyFactor[selectedDifficulty]*0.25)
             game.showLongText("Hurrá! Még " + remainingSeconds + " másodperc maradt", DialogLayout.Center)
             game.showLongText("Kaptál " + levelBonus + " időbónuszt", DialogLayout.Bottom)
             timeBonus += levelBonus
