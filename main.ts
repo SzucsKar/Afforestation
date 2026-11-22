@@ -49,6 +49,7 @@ let projectile = null
 
 
 // Általános beállítások változói
+let lang = false
 let difficulty = false
 let selectedDifficulty = 0
 let difficultyFactor = [1.2,1.0]
@@ -82,16 +83,26 @@ let Hero = sprites.create(assets.image`Mario`, SpriteKind.Player)
 Hero.setFlag(SpriteFlag.Invisible, true)
 
 namespace intro{
-    difficulty = game.ask("Könnyű játék?","(Hosszabb pályaidővel)")
+    lang = game.ask("English language?", "Cancel = Magyar")
+    if (lang) {
+        difficulty = game.ask("Easy mode ? ","(Longer level time)")
+    } else {
+        difficulty = game.ask("Könnyű játék?","(Hosszabb pályaidővel)")
+    }
     if (difficulty) {selectedDifficulty= 0 } else {selectedDifficulty=1 }
     info.setScore(0)
     info.setLife(1)
     scene.setBackgroundColor(13)
-    game.showLongText(
-        "Egyik este furcsa rovarok jelentek meg az erdőben.", DialogLayout.Bottom)
-    scene.setBackgroundColor(12)
-    game.showLongText(
-        "A fákat pusztítják. Mindent megesznek, ami az útjukba kerül.", DialogLayout.Bottom)
+    if (lang) {
+        game.showLongText("One evening, strange insects appeared in the forest.", DialogLayout.Bottom)
+        scene.setBackgroundColor(12)
+        game.showLongText("They are destroying the trees. They eat everything in their path.", DialogLayout.Bottom)
+    } else {
+        game.showLongText("Egyik este furcsa rovarok jelentek meg az erdőben.", DialogLayout.Bottom)
+        scene.setBackgroundColor(12)
+        game.showLongText("A fákat pusztítják. Mindent megesznek, ami az útjukba kerül.", DialogLayout.Bottom)
+    }
+    
     m_levels.NextLevel(1)
 }
 
@@ -100,8 +111,11 @@ namespace m_levels {
     export function NextLevel(num: number) {
         if (num == 1) {
             scene.setBackgroundColor(15)
-            game.showLongText(
-                "Menj a házba szerszámért! Siess, megy az idő!", DialogLayout.Bottom)
+            if (lang) {
+                game.showLongText("Get to the house for a tool! Hurry, time is running out!", DialogLayout.Bottom)
+            } else {
+                game.showLongText("Menj a házba szerszámért! Siess, megy az idő!", DialogLayout.Bottom)
+            }
             tiles.setCurrentTilemap(tilemap`level_1`)
             info.showLife(false)
             info.setLife(1)
@@ -115,8 +129,11 @@ namespace m_levels {
             InitialLevel(xHero, yHero, gHero)
         } else if (num == 2) {
             scene.setBackgroundColor(11)
-            game.showLongText(
-                "Told el a tárgyakat, hogy ki tudd tolni a baltát a ládához!", DialogLayout.Bottom)
+            if(lang){
+                game.showLongText("Push the objects and move the axe to the crate", DialogLayout.Bottom)
+            }else{
+                game.showLongText("Told el a tárgyakat, hogy ki tudd tolni a baltát a ládához!", DialogLayout.Bottom)
+            }
             tiles.setCurrentTilemap(tilemap`level_2`)
             info.setLife(1)
             info.showLife(false)
@@ -131,12 +148,21 @@ namespace m_levels {
         } else if (num == 3) {
             scene.setBackgroundColor(9)
             tiles.setCurrentTilemap(tilemap`level_31`)
-            game.showLongText(
-                "Összesen 15 facsemetét kell gyűjtened, hogy újra ültethesd az erdőt.", DialogLayout.Bottom)
-            game.showLongText(
-                "Igyekezz, mert a rovarok megeszik!", DialogLayout.Bottom)
-            game.showLongText(
-                "Most 4 csemetét gyűjts!", DialogLayout.Bottom)
+            if(lang) {
+                game.showLongText(
+                    "You must collect 15 seedlings to replant the forest.", DialogLayout.Bottom)
+                game.showLongText(
+                    "Hurry! The insects will eat them!", DialogLayout.Bottom)
+                game.showLongText(
+                    "Collect 4 seedlings!", DialogLayout.Bottom)
+            } else {
+                game.showLongText(
+                    "Összesen 15 facsemetét kell gyűjtened, hogy újra ültethesd az erdőt.", DialogLayout.Bottom)
+                game.showLongText(
+                    "Igyekezz, mert a rovarok megeszik!", DialogLayout.Bottom)
+                game.showLongText(
+                    "Most 4 csemetét gyűjts!", DialogLayout.Bottom)
+            }
             info.showLife(false)
             info.setLife(1)
             levelTime = 50
@@ -150,8 +176,11 @@ namespace m_levels {
         } else if (num == 4) {
             scene.setBackgroundColor(9)
             tiles.setCurrentTilemap(tilemap`level_32`)
-            game.showLongText(
-                "További 6 csemetét szedhetsz össze!", DialogLayout.Bottom)
+            if(lang){
+                game.showLongText("You can collect 6 more seedlings!", DialogLayout.Bottom)
+            }else{
+                game.showLongText("További 6 csemetét szedhetsz össze!", DialogLayout.Bottom)
+            }
             info.showLife(false)
             info.setLife(1)
             levelTime = 70
@@ -165,8 +194,11 @@ namespace m_levels {
         } else if (num == 5) {
             scene.setBackgroundColor(9)
             tiles.setCurrentTilemap(tilemap`level_33`)
-            game.showLongText(
-                "Utolsó kör és 5 fácska kell még!", DialogLayout.Bottom)
+            if(lang){
+                game.showLongText("Last round! 5 more seedlings to go!", DialogLayout.Bottom)
+            }else{
+                game.showLongText("Utolsó kör és 5 fácska kell még!", DialogLayout.Bottom)
+            }
             info.showLife(false)
             info.setLife(2)
             levelTime = 90
@@ -179,8 +211,11 @@ namespace m_levels {
             InitialLevel(xHero, yHero, gHero)
         } else if (num == 6) {
             scene.setBackgroundColor(11)
-            game.showLongText(
-                "Hozd ki az ásót a ládához!", DialogLayout.Bottom)
+            if(lang){
+                game.showLongText("Move the spade to the crate!", DialogLayout.Bottom)
+            } else {   
+                game.showLongText("Hozd ki az ásót a ládához!", DialogLayout.Bottom)
+            }
             tiles.setCurrentTilemap(tilemap`level_2`)
             info.setLife(1)
             info.showLife(false)
@@ -194,8 +229,11 @@ namespace m_levels {
             InitialLevel(xHero, yHero, gHero)
         } else if (num == 7) {
             scene.setBackgroundColor(15)
-            game.showLongText(
-                "Győzd le a kártevőt!", DialogLayout.Bottom)
+            if (lang) {
+                game.showLongText("Defeat the pest!", DialogLayout.Bottom)
+            } else {
+                game.showLongText("Győzd le a kártevőt!", DialogLayout.Bottom)
+            }
             tiles.setCurrentTilemap(tilemap`level_5`)
             info.setLife(5)
             info.showLife(true)
@@ -212,8 +250,11 @@ namespace m_levels {
             InitialLevel(xHero, yHero, gHero)
         } else if (num == 8) {
             scene.setBackgroundColor(4)
-            game.showLongText(
-                "Öntözz és ültess!", DialogLayout.Bottom)
+            if(lang){
+                game.showLongText("Water and plant!", DialogLayout.Bottom)
+            } else {
+                game.showLongText("Öntözz és ültess!", DialogLayout.Bottom)
+            }
             tiles.setCurrentTilemap(tilemap`level_6`)
             info.setLife(5)
             info.showLife(true)
@@ -358,7 +399,11 @@ namespace m_levels {
 
     // SZINT ZÁRÁSRA
     export function CloseLevel() {
-        game.showLongText("Teljesítetted a " + currentLevel + ". szintet!", DialogLayout.Top)
+        if(lang){
+            game.showLongText("You completed Level " + currentLevel + "!", DialogLayout.Top)
+        }else{
+            game.showLongText("Teljesítetted a " + currentLevel + ". szintet!", DialogLayout.Top)
+        }
         sprites.destroyAllSpritesOfKind(SpriteKind.Boss)
         sprites.destroyAllSpritesOfKind(SpriteKind.Enemy)
         sprites.destroyAllSpritesOfKind(SpriteKind.Woodcutter)
@@ -368,8 +413,13 @@ namespace m_levels {
             // Az eltelt idő kiszámítása (másodperc alapú finomítással)
             remainingSeconds = info.countdown()
             levelBonus = Math.round(remainingSeconds / difficultyFactor[selectedDifficulty]*0.25)
-            game.showLongText("Hurrá! Még " + remainingSeconds + " másodperc maradt", DialogLayout.Center)
-            game.showLongText("Kaptál " + levelBonus + " időbónuszt", DialogLayout.Bottom)
+            if(lang){
+                game.showLongText("Hooray! " + remainingSeconds + " seconds left", DialogLayout.Center)
+                game.showLongText("You earned " + levelBonus + " bonus points", DialogLayout.Bottom)
+            }else{
+                game.showLongText("Hurrá! Még " + remainingSeconds + " másodperc maradt", DialogLayout.Center)
+                game.showLongText("Kaptál " + levelBonus + " időbónuszt", DialogLayout.Bottom)
+            }
             timeBonus += levelBonus
         }
         resetedLevel = false
@@ -379,12 +429,19 @@ namespace m_levels {
 
     // TIMEOUT KEZELÉSE
     info.onCountdownEnd(function () {
-        let text = "Lejárt az idő! Újra?"
-        Retry(text)
+        if(lang){
+            Retry("Time's up! Retry?")
+        }else{
+            Retry("Lejárt az idő! Újra?")
+        }
+        
     })
     info.onLifeZero(function () {
-        let text = "Elfogyott az életed! Újra?"
-        Retry(text)
+        if(lang){
+            Retry("Out of lives! Retry?")
+        }else{
+            Retry("Elfogyott az életed! Újra?")
+        }
     })
     function Retry(text: string){
         if (game.ask(text)) {
