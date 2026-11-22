@@ -223,6 +223,7 @@ namespace m_levels {
             if (!resetedLevel) { goalCountOfTreasure += 15 }
             heroFire = false
             inHand = tool.Spade
+            dryTreeStock = 0
             gameMode = GameMode.platform
             Hero.setImage(assets.image`MarioWspade`)
             xHero = 24; yHero = 232; gHero = false
